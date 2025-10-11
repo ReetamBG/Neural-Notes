@@ -1,8 +1,9 @@
+import Editor from '@/components/Editor'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>Notes</div>
+    <div className="w-full"><Editor /></div>
   )
 }
 

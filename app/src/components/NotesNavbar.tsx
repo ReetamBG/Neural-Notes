@@ -15,12 +15,12 @@ const NotesNavbar = async () => {
   await syncClerkUserToDB();
 
   return (
-    <header className="absolute top-0 w-screen h-12 border-b-2 px-4 flex items-center justify-between bg-background">
+    <header className="bg-sidebar absolute top-0 w-screen h-12 border-b-2 px-4 flex items-center justify-between ">
       <NavbarLogo />
       {user && (
-        <div className="flex gap-2">
+        <div className="flex items-center gap-4">
           <div className="p-0.5 rounded-full border-2 border-primary">
-            <Avatar>
+            <Avatar className="size-6">
               <AvatarImage src={user?.imageUrl} />
               <AvatarFallback>
                 {user?.firstName?.charAt(0)}

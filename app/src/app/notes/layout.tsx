@@ -5,11 +5,11 @@ import React from "react";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div>
+    <div className="max-w-screen overflow-x-auto">
       <NotesNavbar />
       <SidebarProvider>
         <FoldersSidebar />
-        <main className="mt-12">
+        <main className="mt-12 w-full">
           {children}
         </main>
       </SidebarProvider>
