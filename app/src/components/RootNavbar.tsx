@@ -13,14 +13,20 @@ import {
 import {
   SignInButton,
   SignOutButton,
-  UserButton,
   useUser,
 } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
+import ThemeToggle from "./ThemeToggler";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { syncClerkUserToDB } from "@/actions/user.actions";
 
 export default function NavbarDemo() {
   const { isLoaded, user } = useUser();
+  
+  useEffect(() => {
+    syncClerkUserToDB();
+  }, [isLoaded, user]);
 
   let navItems;
 
@@ -70,10 +76,17 @@ export default function NavbarDemo() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
+            {/* <ThemeToggle /> */}
             {isLoaded && user ? (
               <>
                 <div className=" grid place-content-center border-2 border-primary rounded-full p-0.5">
-                  <UserButton />
+                  <Avatar>
+                    <AvatarImage
+                      src={user.imageUrl}
+                      alt="avatar"
+                    />
+                    <AvatarFallback>{user.firstName?.charAt(1)}{user.lastName?.charAt(1)}</AvatarFallback>
+                  </Avatar>
                 </div>
                 <SignOutButton>
                   <Button className="z-10" variant="outline">
@@ -82,7 +95,7 @@ export default function NavbarDemo() {
                 </SignOutButton>
               </>
             ) : (
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" forceRedirectUrl={"/notes"}>
                 <NavbarButton variant="primary" className="cursor-pointer">
                   Sign In
                 </NavbarButton>

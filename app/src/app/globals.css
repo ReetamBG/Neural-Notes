@@ -59,7 +59,8 @@
 }
 
 .dark {
-  --background: oklch(0.2166 0.0215 292.8474);
+  /* --background: oklch(0.2166 0.0215 292.8474); */
+  --background: oklch(17.9% 0.00613 285.724);
   --foreground: oklch(0.9053 0.0245 293.5570);
   --card: oklch(0.2544 0.0301 292.7315);
   --card-foreground: oklch(0.9053 0.0245 293.5570);
@@ -171,7 +172,7 @@ body {
 @theme inline {
   --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1
   var(--delay, 0ms);
- 
+
   @keyframes cell-ripple {
     0% {
       opacity: 0.4;
