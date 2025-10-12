@@ -1,11 +1,12 @@
 "use client"
+import TextEditor from '@/components/Editor';
 import useNotesStore from '@/store/notes.store';
 import React from 'react'
 
 const Page = () => {
   const {selectedFolder} = useNotesStore();
   return (
-    <div>{selectedFolder?.title}</div>
+    <div><TextEditor /></div>
   )
 }
 
