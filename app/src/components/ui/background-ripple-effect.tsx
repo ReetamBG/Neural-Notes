@@ -6,10 +6,12 @@ export const BackgroundRippleEffect = ({
   rows,
   cols,
   cellSize = 40,
+  className
 }: {
   rows?: number;
   cols?: number;
   cellSize?: number;
+  className?: string;
 }) => {
   const [clickedCell, setClickedCell] = useState<{
     row: number;
@@ -43,7 +45,8 @@ export const BackgroundRippleEffect = ({
     <div
       ref={ref}
       className={cn(
-        "absolute inset-0 h-full w-full",
+        className,
+        "absolute inset-0 h-full w-full ",
         "[--cell-border-color:var(--color-neutral-300)] [--cell-fill-color:var(--color-neutral-100)] [--cell-shadow-color:var(--color-neutral-500)]",
         "dark:[--cell-border-color:var(--color-neutral-700)] dark:[--cell-fill-color:var(--color-neutral-900)] dark:[--cell-shadow-color:var(--color-neutral-800)]",
       )}

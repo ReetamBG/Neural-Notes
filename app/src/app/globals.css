@@ -306,6 +306,11 @@ body {
   }
 }
 
+/* Override sidebar background */
+[data-sidebar="sidebar"] {
+  background-color: hsl(var(--background) / 0.05) !important;
+}
+
 /* TipTap editor content styles */
 .editor-content {
   /* Base text */

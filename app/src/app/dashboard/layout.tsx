@@ -5,7 +5,7 @@ import React from "react";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="max-w-screen overflow-x-auto">
+    <div className="max-w-screen overflow-x-auto h-screen">
       <NotesNavbar />
       <SidebarProvider>
         <FoldersSidebar />

@@ -22,7 +22,7 @@ import useNotesStore from "@/store/notes.store";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,8 +56,8 @@ export default function FolderSidebar() {
   }, [fetchAllFolders]);
 
   return (
-    <Sidebar className="relative top-12 w-64">
-      <SidebarContent>
+    <Sidebar className="relative top-12 w-64 h-[calc(100vh-3rem)]">
+      <SidebarContent className="bg-background">
         <SidebarGroup>
           <SidebarGroupLabel className="mb-2 flex justify-between items-center">
             <span>Folders</span>

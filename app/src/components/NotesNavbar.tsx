@@ -15,7 +15,7 @@ const NotesNavbar = async () => {
   await syncClerkUserToDB();
 
   return (
-    <header className="bg-sidebar absolute top-0 w-screen h-12 border-b-2 px-4 flex items-center justify-between ">
+    <header className="z-100 bg-background absolute top-0 w-screen h-12 border-b-2 px-4 flex items-center justify-between ">
       <NavbarLogo />
       {user && (
         <div className="flex items-center gap-4">

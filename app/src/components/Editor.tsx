@@ -344,7 +344,7 @@ export default function TextEditor({
   }, [isNewNote, noteId, editor, fetchNoteById]);
 
   return (
-    <div className="flex flex-col h-screen w-full">
+    <div className="flex flex-col h-screen w-full bg-card">
       <MenuBar
         editor={editor}
         title={title}
@@ -354,7 +354,7 @@ export default function TextEditor({
       />
       {isNoteContentLoading ? (
         <div className="space-y-2 my-4 px-4">
-              <Skeleton className="h-24 w-full mb-8" />
+              <Skeleton className="h-20 w-full mb-8" />
           {Array(6)
             .fill(0)
             .map((_, idx) => (

@@ -17,7 +17,6 @@ import {
 } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import ThemeToggle from "./ThemeToggler";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { syncClerkUserToDB } from "@/actions/user.actions";
 
