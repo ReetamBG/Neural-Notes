@@ -34,7 +34,7 @@ export default function NavbarDemo() {
     navItems = [
       {
         name: "My Notes",
-        link: "/notes",
+        link: "/dashboard",
       },
       {
         name: "Features",
@@ -95,7 +95,7 @@ export default function NavbarDemo() {
                 </SignOutButton>
               </>
             ) : (
-              <SignInButton mode="modal" forceRedirectUrl={"/notes"}>
+              <SignInButton mode="modal" forceRedirectUrl={"/dashboard"}>
                 <NavbarButton variant="primary" className="cursor-pointer">
                   Sign In
                 </NavbarButton>

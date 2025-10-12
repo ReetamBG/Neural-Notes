@@ -24,8 +24,7 @@ export async function createFolder(
     if (!name.trim()) throw new Error("Folder name cannot be empty");
 
     const user = await currentUser();
-    if (!user)
-      throw new Error("User not authenticated");
+    if (!user) throw new Error("User not authenticated");
 
     const dbUser = await prisma.user.findUnique({
       where: { clerkId: user.id },
@@ -83,6 +82,7 @@ export async function fetchFolders(): Promise<
 export async function createNote(
   title: string,
   content: string,
+  contentString: string,
   folderId: string
 ): Promise<ActionResult<{ note: Note }>> {
   try {
@@ -96,10 +96,18 @@ export async function createNote(
 
     const userId = dbUser.id;
 
+    console.log({
+      title: title,
+      content: content,
+      contentString: contentString,
+      folderId: folderId,
+    });
+
     const note = await prisma.note.create({
       data: {
         title,
         content,
+        contentString,
         userId,
         folderId,
       },
@@ -107,6 +115,7 @@ export async function createNote(
 
     return { status: true, data: { note }, message: "Note saved successfully" };
   } catch (error) {
+    console.log("Error in create note:", error);
     return {
       status: false,
       message: error instanceof Error ? error.message : String(error),
@@ -133,10 +142,37 @@ export async function fetchNotesByFolderId(
   }
 }
 
+export async function fetchNoteById(
+  noteId: string
+): Promise<ActionResult<{ note: Note }>> {
+  try {
+    const note = await prisma.note.findUnique({
+      where: {
+        id: noteId,
+      },
+    });
+
+    if (!note) {
+      return {
+        status: false,
+        message: "Note not found",
+      };
+    }
+
+    return { status: true, data: { note } };
+  } catch (error) {
+    return {
+      status: false,
+      message: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
 export async function updateNote(
   noteId: string,
   newTitle: string,
-  newContent: string
+  newContent: string,
+  newContentString: string
 ): Promise<ActionResult<{ note: Note }>> {
   try {
     const note = await prisma.note.update({
@@ -146,11 +182,13 @@ export async function updateNote(
       data: {
         title: newTitle,
         content: newContent,
+        contentString: newContentString,
       },
     });
 
     return { status: true, data: { note } };
   } catch (error) {
+    console.log("Error in update note:", error);
     return {
       status: false,
       message: error instanceof Error ? error.message : String(error),
@@ -164,7 +202,11 @@ export const deleteNote = async (noteId: string) => {
       where: { id: noteId },
     });
 
-    return { status: true, data: { note: deletedNote } , message: "Note deleted"};
+    return {
+      status: true,
+      data: { note: deletedNote },
+      message: "Note deleted",
+    };
   } catch (error) {
     return {
       status: false,
@@ -179,11 +221,15 @@ export const deleteFolder = async (folderId: string) => {
       where: { id: folderId },
     });
 
-    return { status: true, data: { folder: deletedFolder }, message: "Folder deleted" };
+    return {
+      status: true,
+      data: { folder: deletedFolder },
+      message: "Folder deleted",
+    };
   } catch (error) {
     return {
       status: false,
       message: error instanceof Error ? error.message : String(error),
     };
   }
-}
+};

@@ -22,7 +22,7 @@ import useNotesStore from "@/store/notes.store";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,9 +44,12 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Skeleton } from "./ui/skeleton";
+import { Card, CardContent } from "./ui/card";
 
 export default function FolderSidebar() {
-  const { folders, fetchAllFolders, selectedFolder } = useNotesStore();
+  const { folders, fetchAllFolders, currentFolder, isFoldersLoading } =
+    useNotesStore();
 
   useEffect(() => {
     fetchAllFolders();
@@ -62,40 +65,64 @@ export default function FolderSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {folders.map((f) => {
-                const isSelected = selectedFolder?.id === f.id;
-                return (
-                  <SidebarMenuItem
-                    key={f.id}
-                    onClick={() => {
-                      useNotesStore.setState({ selectedFolder: f });
-                    }}
-                    className={cn(
-                      "transition-colors rounded-md",
-                      isSelected
-                        ? "bg-accent text-accent-foreground"
-                        : "hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    <SidebarMenuButton asChild>
-                      <Link
-                        href={`/notes/folder/${f.id}`}
-                        className="flex justify-between w-full items-center"
-                      >
-                        <div className="flex items-center gap-2">
-                          {isSelected ? (
-                            <FolderOpen size={20} />
-                          ) : (
-                            <Folder size={20} />
-                          )}
-                          <span>{f.title}</span>
-                        </div>
-                        <DeleteFolderDialog folderId={f.id} />
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {isFoldersLoading ? (
+                <div className="space-y-2">
+                  {Array(3)
+                    .fill(0)
+                    .map((_, idx) => (
+                      <Skeleton key={idx} className="h-8 w-full" />
+                    ))}
+                </div>
+              ) : (
+                <>
+                  {folders.length === 0 ? (
+                    <Card className="my-4 py-2">
+                      <CardContent>
+                        <p className="text-center text-muted-foreground">
+                          No folders found.<br /><br/> Create a new folder to get started!
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <>
+                      {folders.map((f) => {
+                        const isSelected = currentFolder?.id === f.id;
+                        return (
+                          <SidebarMenuItem
+                            key={f.id}
+                            onClick={() => {
+                              useNotesStore.setState({ currentFolder: f });
+                            }}
+                            className={cn(
+                              "transition-colors rounded-md",
+                              isSelected
+                                ? "bg-accent text-accent-foreground"
+                                : "hover:bg-accent hover:text-accent-foreground"
+                            )}
+                          >
+                            <SidebarMenuButton asChild>
+                              <Link
+                                href={`/dashboard/folder/${f.id}`}
+                                className="flex justify-between w-full items-center"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {isSelected ? (
+                                    <FolderOpen size={20} />
+                                  ) : (
+                                    <Folder size={20} />
+                                  )}
+                                  <span>{f.title}</span>
+                                </div>
+                                <DeleteFolderDialog folderId={f.id} />
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </>
+                  )}
+                </>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -106,7 +133,7 @@ export default function FolderSidebar() {
 
 const NewFolderDialog = () => {
   const [open, setOpen] = useState(false); // control dialog
-  const { addNewFolder, actionProcessing } = useNotesStore();
+  const { addNewFolder, isActionProcessing } = useNotesStore();
 
   async function handleAddFolder(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -122,7 +149,7 @@ const NewFolderDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-lg h-6 text-xs">
+        <Button className="rounded-lg h-6 text-xs bg-accent-foreground">
           New
           <FolderPlus size={10} />
         </Button>
@@ -134,8 +161,8 @@ const NewFolderDialog = () => {
           <DialogDescription className="sr-only" />
           <form onSubmit={handleAddFolder} className="flex gap-5">
             <Input name="folderName" required />
-            <Button type="submit" disabled={actionProcessing}>
-              {actionProcessing ? (
+            <Button type="submit" disabled={isActionProcessing}>
+              {isActionProcessing ? (
                 <>
                   <LoaderCircle className="animate-spin" />
                 </>
@@ -151,15 +178,16 @@ const NewFolderDialog = () => {
 };
 
 const DeleteFolderDialog = ({ folderId }: { folderId: string }) => {
-  const { selectedFolder, deleteFolder } = useNotesStore();
+  const { currentFolder, deleteFolder } = useNotesStore();
+  const router = useRouter();
 
   return (
     <AlertDialog>
       <AlertDialogTrigger>
         <span
           // onClick={(e) => {
-            // e.stopPropagation(); // prevent Link click propagation
-            // e.preventDefault(); // prevent Link click propagation
+          // e.stopPropagation(); // prevent Link click propagation
+          // e.preventDefault(); // prevent Link click propagation
           // }}
           className="p-1 hover:text-primary rounded cursor-pointer "
         >
@@ -181,9 +209,9 @@ const DeleteFolderDialog = ({ folderId }: { folderId: string }) => {
               deleteFolder(folderId);
 
               // if selected folder is deleted redirect to /dashboard
-              if (selectedFolder?.id === folderId) {
-                redirect("/notes");
-                useNotesStore.setState({ selectedFolder: null });
+              if (currentFolder?.id === folderId) {
+                useNotesStore.setState({ currentFolder: null });
+                router.push("/dashboard");
               }
             }}
           >
