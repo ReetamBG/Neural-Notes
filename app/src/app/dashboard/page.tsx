@@ -5,7 +5,7 @@ import useNotesStore from "@/store/notes.store";
 import React from "react";
 
 const Page = () => {
-  const { folders } = useNotesStore();
+  const { folders, isFoldersLoading } = useNotesStore();
   return (
     <div className="w-full h-full grid place-content-center text-muted-foreground text-lg sm:text-2xl">
       <BackgroundRippleEffect
@@ -15,10 +15,16 @@ const Page = () => {
          dark:[--cell-fill-color:var(--color-neutral-950)]!
          dark:[--cell-shadow-color:var(--color-neutral-900)]!"
       />
-      {folders.length === 0 ? (
-        <p>Create a new folder to get started!</p>
+      {isFoldersLoading ? (
+        <div>Fetching your stuff... </div>
       ) : (
-        <p>Select a folder to continue</p>
+        <>
+          {folders.length === 0 ? (
+            <p>Create a new folder to get started!</p>
+          ) : (
+            <p>Select a folder to continue</p>
+          )}
+        </>
       )}
     </div>
   );
