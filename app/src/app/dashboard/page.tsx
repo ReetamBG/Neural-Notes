@@ -10,7 +10,7 @@ const Page = () => {
     <div className="w-full h-full grid place-content-center text-muted-foreground text-lg sm:text-2xl">
       <BackgroundRippleEffect
         cellSize={70}
-        className="-z-10 
+        className=" 
          dark:[--cell-border-color:var(--color-neutral-800)]!
          dark:[--cell-fill-color:var(--color-neutral-950)]!
          dark:[--cell-shadow-color:var(--color-neutral-900)]!"

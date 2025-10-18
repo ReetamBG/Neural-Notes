@@ -17,6 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarProvider,
 } from "@/components/ui/sidebar";
 import useNotesStore from "@/store/notes.store";
 import Link from "next/link";
@@ -56,78 +57,86 @@ export default function FolderSidebar() {
   }, [fetchAllFolders]);
 
   return (
-    <Sidebar className="relative top-12 w-64 h-[calc(100vh-3rem)]">
-      <SidebarContent className="bg-background">
-        <SidebarGroup>
-          <SidebarGroupLabel className="mb-2 flex justify-between items-center">
-            <span>Folders</span>
-            <NewFolderDialog />
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {isFoldersLoading ? (
-                <div className="space-y-2">
-                  {Array(3)
-                    .fill(0)
-                    .map((_, idx) => (
-                      <Skeleton key={idx} className="h-8 w-full" />
-                    ))}
-                </div>
-              ) : (
-                <>
-                  {folders.length === 0 ? (
-                    <Card className="my-4 py-2">
-                      <CardContent>
-                        <p className="text-center text-muted-foreground">
-                          No folders found.<br /><br/> Create a new folder to get started!
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <>
-                      {folders.map((f) => {
-                        const isSelected = currentFolder?.id === f.id;
-                        return (
-                          <SidebarMenuItem
-                            key={f.id}
-                            onClick={() => {
-                              useNotesStore.setState({ currentFolder: f });
-                            }}
-                            className={cn(
-                              "transition-colors rounded-md",
-                              isSelected
-                                ? "bg-accent text-accent-foreground"
-                                : "hover:bg-accent hover:text-accent-foreground"
-                            )}
-                          >
-                            <SidebarMenuButton asChild>
-                              <Link
-                                href={`/dashboard/folder/${f.id}`}
-                                className="flex justify-between w-full items-center"
-                              >
-                                <div className="flex items-center gap-2">
-                                  {isSelected ? (
-                                    <FolderOpen size={20} />
-                                  ) : (
-                                    <Folder size={20} />
-                                  )}
-                                  <span>{f.title}</span>
-                                </div>
-                                <DeleteFolderDialog folderId={f.id} />
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        );
-                      })}
-                    </>
-                  )}
-                </>
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    // <Sidebar variant="inset" className="relative top-12 w-64 h-[calc(100vh-3rem)]">
+    <SidebarProvider className="w-64 ">
+      <Sidebar
+        variant="inset"
+        className="relative top-12 w-64 h-[calc(100vh-3rem)] p-0 border-r-1 bg-background"
+      >
+        <SidebarContent className="">
+          <SidebarGroup>
+            <SidebarGroupLabel className="mb-2 flex justify-between items-center">
+              <span>Folders</span>
+              <NewFolderDialog />
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {isFoldersLoading ? (
+                  <div className="space-y-2">
+                    {Array(3)
+                      .fill(0)
+                      .map((_, idx) => (
+                        <Skeleton key={idx} className="h-8 w-full" />
+                      ))}
+                  </div>
+                ) : (
+                  <>
+                    {folders.length === 0 ? (
+                      <Card className="my-4 py-2">
+                        <CardContent>
+                          <p className="text-center text-muted-foreground">
+                            No folders found.
+                            <br />
+                            <br /> Create a new folder to get started!
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <>
+                        {folders.map((f) => {
+                          const isSelected = currentFolder?.id === f.id;
+                          return (
+                            <SidebarMenuItem
+                              key={f.id}
+                              onClick={() => {
+                                useNotesStore.setState({ currentFolder: f });
+                              }}
+                              className={cn(
+                                "transition-colors rounded-md",
+                                isSelected
+                                  ? "bg-accent text-accent-foreground"
+                                  : "hover:bg-accent hover:text-accent-foreground"
+                              )}
+                            >
+                              <SidebarMenuButton asChild>
+                                <Link
+                                  href={`/dashboard/folder/${f.id}`}
+                                  className="flex justify-between w-full items-center"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    {isSelected ? (
+                                      <FolderOpen size={20} />
+                                    ) : (
+                                      <Folder size={20} />
+                                    )}
+                                    <span>{f.title}</span>
+                                  </div>
+                                  <DeleteFolderDialog folderId={f.id} />
+                                </Link>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          );
+                        })}
+                      </>
+                    )}
+                  </>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </SidebarProvider>
   );
 }
 

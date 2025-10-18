@@ -1,41 +1,79 @@
-import React from "react";
+// TODO: Show the analyze button only when editor is open
+// TODO: Save analysis results to the note metadata
+// TODO: or maybe move the analyze button to the notes card only
+
+"use client";
+
+import React, { useEffect } from "react";
 import { NavbarLogo } from "./ui/resizable-navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { syncClerkUserToDB } from "@/actions/user.actions";
+import useSidebarStore from "@/store/sidebar.store";
+import { Bot } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-const NotesNavbar = async () => {
-  const user = await currentUser();
+const NotesNavbar = () => {
+  const { isLoaded, user } = useUser();
+  const { toggleAiSidebar } = useSidebarStore();
 
-  if(!user) redirect("/");
-   
-  await syncClerkUserToDB();
+  if (!user) redirect("/");
+
+  useEffect(() => {
+    (async () => {
+      await syncClerkUserToDB();
+    })();
+  });
 
   return (
-    <header className="z-100 bg-background absolute top-0 w-screen h-12 border-b-2 px-4 flex items-center justify-between ">
-      <NavbarLogo />
-      {user && (
-        <div className="flex items-center gap-4">
-          <div className="p-0.5 rounded-full border-2 border-primary">
-            <Avatar className="size-6">
-              <AvatarImage src={user?.imageUrl} />
-              <AvatarFallback>
-                {user?.firstName?.charAt(0)}
-                {user?.lastName?.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-          <SignOutButton>
-            <Button variant="outline" >
-              Sign Out
-            </Button>
-          </SignOutButton>
+    <>
+      {/* Placeholder for padding as the header is fixed*/}
+      {/* <div className="h-12"></div> */}
+      <header className="z-100 bg-background fixed top-0 w-screen h-12 border-b-2 px-4 flex items-center justify-between ">
+        {/* Logo */}
+        <NavbarLogo />
+
+        {/* Middle buttons */}
+        <div className="flex gap-4">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 rounded-lg flex gap-2"
+                onClick={toggleAiSidebar}
+              >
+                <Bot />
+                AI Chat
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Toggle AI Chat</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
-      )}
-    </header>
+
+        {/* User avatar and signout */}
+        {isLoaded && user && (
+          <div className="flex items-center gap-4">
+            <div className="p-0.5 rounded-full border-2 border-primary">
+              <Avatar className="size-6">
+                <AvatarImage src={user?.imageUrl} />
+                <AvatarFallback>
+                  {user?.firstName?.charAt(0)}
+                  {user?.lastName?.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <SignOutButton>
+              <Button variant="outline">Sign Out</Button>
+            </SignOutButton>
+          </div>
+        )}
+      </header>
+    </>
   );
 };
 
