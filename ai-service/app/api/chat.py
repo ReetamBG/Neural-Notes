@@ -11,6 +11,8 @@ from app.models import (
     ChatWithNotesRequest,
     NotesRequest,
     SuccessResponse,
+    VectorDBExistsRequest,
+    StatusResponse
 )
 from app.services import llm_service, vectorstore_service
 
@@ -27,7 +29,7 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 )
 async def chat_with_document(request: ChatRequest):
     """Chat with uploaded document."""
-    vector_db_path = settings.vector_db_dir / request.filename
+    vector_db_path = settings.vector_db_dir / request.user_id / "uploaded_doc"/ request.folder_id
     
     if not vector_db_path.exists():
         raise HTTPException(
@@ -59,12 +61,12 @@ async def chat_with_document(request: ChatRequest):
 )
 async def chat_with_notes(request: ChatWithNotesRequest):
     """Chat with uploaded notes."""
-    vector_db_path = settings.vector_db_dir / request.note_id
+    vector_db_path = settings.vector_db_dir / request.user_id / "notes" / request.folder_id
     
     if not vector_db_path.exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Notes '{request.note_id}' not found. Please upload them first."
+            detail=f"Notes not found for user '{request.user_id}' in folder '{request.folder_id}'. Please upload them first."
         )
     
     try:
@@ -83,26 +85,31 @@ async def chat_with_notes(request: ChatWithNotesRequest):
 
 
 @router.post(
-    "/upload-notes",
-    response_model=SuccessResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Upload notes",
-    description="Upload text notes and create vector embeddings"
+        "/doc-vector-db-exist",
+        response_model=StatusResponse,
+        status_code=status.HTTP_200_OK,
+        summary="Check if document vector db exists",
 )
-async def upload_notes(request: NotesRequest):
-    """Upload and process text notes."""
-    try:
-        vector_db_path = settings.vector_db_dir / request.note_id
-        
-        await vectorstore_service.create_vectorstore_from_text(
-            request.notes,
-            vector_db_path
-        )
-        
-        return SuccessResponse(message="Notes processed successfully")
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to process notes: {str(e)}"
-        )
+async def check_document_exist(request: VectorDBExistsRequest):
+    """Check if document vector db exist for the user and folder."""
+    vector_db_path = settings.vector_db_dir / request.user_id / "uploaded_doc" / request.folder_id
+
+    if not vector_db_path.exists():
+        return StatusResponse(status=False)
+
+    return StatusResponse(status=True)
+
+@router.post(
+        "/notes-vector-db-exist",
+        response_model=StatusResponse,
+        status_code=status.HTTP_200_OK,
+        summary="Check if notes vector db exist",
+)
+async def check_notes_exist(request: VectorDBExistsRequest):
+    """Check if notes vector db exist for the user and folder."""
+    vector_db_path = settings.vector_db_dir / request.user_id / "notes" / request.folder_id
+
+    if not vector_db_path.exists():
+        return StatusResponse(status=False)
+    
+    return StatusResponse(status=True)

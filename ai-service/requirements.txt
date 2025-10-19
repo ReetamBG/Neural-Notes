@@ -11,6 +11,7 @@ langchain-huggingface>=0.0.1
 
 # Vector database
 chromadb>=0.4.20
+langchain-chroma>=0.1.0
 
 # ML and embeddings
 sentence-transformers>=2.2.2

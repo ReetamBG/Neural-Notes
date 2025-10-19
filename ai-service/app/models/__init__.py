@@ -9,6 +9,8 @@ from .schemas import (
     ErrorResponse,
     NotesRequest,
     SuccessResponse,
+    VectorDBExistsRequest,
+    StatusResponse
 )
 
 __all__ = [
@@ -20,4 +22,6 @@ __all__ = [
     "ErrorResponse",
     "NotesRequest",
     "SuccessResponse",
+    "VectorDBExistsRequest",
+    "StatusResponse"
 ]

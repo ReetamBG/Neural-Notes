@@ -13,21 +13,23 @@ class Settings(BaseSettings):
     # API Configuration
     app_name: str = "ML API"
     version: str = "1.0.0"
-    debug: bool = False
+    debug: bool = True
     
     # OpenRouter API Configuration
-    openrouter_api_key: str = "add your key"
+    openrouter_api_key: str = "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"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
-    default_model: str = "deepseek/deepseek-chat-v3-0324:free"
+    # default_model: str = "deepseek/deepseek-chat-v3-0324:free"
+    default_model: str = "x-ai/grok-4-fast"
     
     # File Upload Configuration
     max_upload_size: int = 50 * 1024 * 1024  # 50MB
     allowed_extensions: List[str] = [".pdf", ".mp4", ".avi", ".mov", ".mkv"]
     
     # Directory Configuration
-    upload_dir: Path = Path("uploads")
-    vector_db_dir: Path = Path("chroma_db")
-    audio_dir: Path = Path("vid_to_audio_data")
+    root_data_dir: Path = Path("data")
+    upload_dir: Path = root_data_dir / "uploads"
+    vector_db_dir: Path = root_data_dir / "vector_dbs"
+    audio_dir: Path = root_data_dir / "extracted_audios"
     model_dir: Path = Path("vosk-model-small-en-us-0.15")
     
     # Embedding Configuration
@@ -60,5 +62,5 @@ def get_settings() -> Settings:
 
 # Create directories on import
 settings = get_settings()
-for directory in [settings.upload_dir, settings.vector_db_dir, settings.audio_dir]:
+for directory in [settings.root_data_dir, settings.upload_dir, settings.vector_db_dir, settings.audio_dir]:
     directory.mkdir(exist_ok=True)

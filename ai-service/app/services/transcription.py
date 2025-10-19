@@ -39,6 +39,9 @@ class TranscriptionService:
         audio_path: Path
     ) -> None:
         """Extract audio from video using FFmpeg."""
+        # Ensure the output directory exists
+        audio_path.parent.mkdir(parents=True, exist_ok=True)
+        
         command = [
             "ffmpeg", "-y", "-i", str(video_path),
             "-ar", str(settings.audio_sample_rate),
@@ -55,6 +58,8 @@ class TranscriptionService:
         )
         
         if result.returncode != 0:
+            print(f"FFmpeg stderr: {result.stderr}")
+            print(f"FFmpeg stdout: {result.stdout}")
             raise RuntimeError(f"FFmpeg failed: {result.stderr}")
     
     async def transcribe_audio(self, audio_path: Path) -> str:

@@ -7,26 +7,38 @@ from pydantic import BaseModel, Field
 class ChatRequest(BaseModel):
     """Chat request model."""
     query: str = Field(..., min_length=1, description="User query")
-    filename: str = Field(..., min_length=1, description="Associated filename")
+    user_id: str = Field(..., min_length=1, description="User identifier")
+    folder_id: str = Field(..., min_length=1, description="Folder identifier")
+
+class VectorDBExistsRequest(BaseModel):
+    """Request model to check if vector DB exists."""
+    user_id: str = Field(..., min_length=1, description="User identifier")
+    folder_id: str = Field(..., min_length=1, description="Folder identifier")
 
 
 class ChatWithNotesRequest(BaseModel):
     """Chat with notes request model."""
     query: str = Field(..., min_length=1, description="User query")
-    note_id: str = Field(..., min_length=1, description="Note identifier")
+    user_id: str = Field(..., min_length=1, description="User identifier")
+    folder_id: str = Field(..., min_length=1, description="Folder identifier")
 
 
 class NotesRequest(BaseModel):
-    """Notes upload request model."""
+    """
+    Notes upload request model. 
+    Uses all notes in a folder as a single string for embedding.
+    """
     notes: str = Field(..., min_length=1, description="Notes content")
-    note_id: str = Field(..., min_length=1, description="Note identifier")
+    user_id: str = Field(..., min_length=1, description="User identifier")
+    folder_id: str = Field(..., min_length=1, description="Folder identifier")
 
 
 class AnalysisRequest(BaseModel):
     """Analysis request model."""
     title: str = Field(..., min_length=1, description="Content title")
     text: str = Field(..., min_length=1, description="User text to analyze")
-    filename: str = Field(..., min_length=1, description="Associated filename")
+    user_id: str = Field(..., min_length=1, description="User identifier")
+    folder_id: str = Field(..., min_length=1, description="Folder identifier")
 
 
 class ChatResponse(BaseModel):
@@ -37,6 +49,10 @@ class ChatResponse(BaseModel):
 class SuccessResponse(BaseModel):
     """Generic success response model."""
     message: str = Field(default="Success", description="Success message")
+
+class StatusResponse(BaseModel):
+    """Status response model."""
+    status: bool = Field(..., description="Existence status")
 
 
 class AnalysisResponse(BaseModel):

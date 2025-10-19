@@ -21,7 +21,7 @@ router = APIRouter(prefix="/analysis", tags=["analysis"])
 )
 async def analyze_text(request: AnalysisRequest):
     """Analyze user text for accuracy and missing information."""
-    vector_db_path = settings.vector_db_dir / request.filename
+    vector_db_path = settings.vector_db_dir / request.user_id / "uploaded_doc"/ request.folder_id
     
     if not vector_db_path.exists():
         raise HTTPException(
