@@ -50,8 +50,8 @@ const Features = () => {
   ];
   return (
     <section id="features" className="w-full h-auto bg-neutral-950">
-      <div className="mx-auto max-w-7xl">
-        <h2 className="mx-8 text-3xl font-bold sm:text-6xl text-primary">
+      <div className="mx-auto max-w-7xl 2xl:max-w-8xl">
+        <h2 className="mx-8 text-3xl font-bold sm:text-7xl text-primary">
           What you get
         </h2>
         <StickyScroll content={content} />

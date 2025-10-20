@@ -64,7 +64,7 @@ export const StickyScroll = ({
               transition={{
                 duration: 0.3,
               }}
-              className="text-2xl sm:text-3xl lg:text-5xl font-bold  mb-6 lg:mb-8 bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600"
+              className="text-2xl sm:text-3xl lg:text-5xl 2xl:text-6xl font-bold  mb-6 lg:mb-8 bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600"
             >
               {content[activeCard].title}
             </motion.h2>
@@ -82,7 +82,7 @@ export const StickyScroll = ({
                 duration: 0.3,
                 delay: 0.1,
               }}
-              className="text-base sm:text-lg text-muted-foreground leading-relaxed"
+              className="text-base sm:text-lg 2xl:text-xl text-muted-foreground leading-relaxed"
             >
               {content[activeCard].description}
             </motion.p>

@@ -30,9 +30,9 @@ const HeroSection = async () => {
             <Link href={"/dashboard"}>
               <Button
                 size="lg"
-                className="font-bold hover:-translate-y-1 hover:scale-105"
+                className="font-bold text-base 2xl:text-lg hover:-translate-y-1 hover:scale-105"
               >
-                <BookOpen />
+                <BookOpen className="size-4 2xl:size-6"/>
                 My Notes
               </Button>
             </Link>
@@ -40,9 +40,9 @@ const HeroSection = async () => {
             <SignInButton mode="modal" forceRedirectUrl={"/dashboard"}>
               <Button
                 size="lg"
-                className="font-bold uppercase hover:-translate-y-1 hover:scale-105"
+                className="font-bold text-base 2xl:text-lg hover:-translate-y-1 hover:scale-105"
               >
-                Start Learning <ChevronRight />
+                Start Learning <ChevronRight className="size-4 2xl:size-6"/>
               </Button>
             </SignInButton>
           )}
