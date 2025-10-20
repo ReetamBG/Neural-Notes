@@ -12,12 +12,12 @@ import { Button } from "./ui/button";
 import { redirect } from "next/navigation";
 import { syncClerkUserToDB } from "@/actions/user.actions";
 import useSidebarStore from "@/store/sidebar.store";
-import { Bot } from "lucide-react";
+import { Bot, Folder } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const NotesNavbar = () => {
   const { isLoaded, user } = useUser();
-  const { toggleAiSidebar } = useSidebarStore();
+  const { toggleAiSidebar, toggleFoldersSidebar } = useSidebarStore();
 
   if (!user) redirect("/");
 
@@ -37,6 +37,15 @@ const NotesNavbar = () => {
 
         {/* Middle buttons */}
         <div className="flex gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 rounded-lg flex gap-2"
+            onClick={toggleFoldersSidebar}
+          >
+            <Folder />
+            <span className="hidden sm:block">Folders</span>
+          </Button>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -46,7 +55,7 @@ const NotesNavbar = () => {
                 onClick={toggleAiSidebar}
               >
                 <Bot />
-                AI Chat
+                <span className="hidden sm:block">AI Chat</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -58,7 +67,7 @@ const NotesNavbar = () => {
         {/* User avatar and signout */}
         {isLoaded && user && (
           <div className="flex items-center gap-4">
-            <div className="p-0.5 rounded-full border-2 border-primary">
+            <div className="hidden sm:block p-0.5 rounded-full border-2 border-primary">
               <Avatar className="size-6">
                 <AvatarImage src={user?.imageUrl} />
                 <AvatarFallback>

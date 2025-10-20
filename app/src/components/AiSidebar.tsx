@@ -82,11 +82,12 @@ const AiSidebarContent = () => {
 export default AiSidebar;
 
 const ChatTabs = () => {
-  const { currentFolder } = useNotesStore();
+  const { currentFolder, fetchAllNotesInFolder, notesInCurrentFolder, isNotesLoading } = useNotesStore();
   const [selectedTab, setSelectedTab] = useState<"doc-chat" | "notes-chat">(
     "doc-chat"
   );
   const [loadingUser, setLoadingUser] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -95,8 +96,19 @@ const ChatTabs = () => {
       const userFromDB = await getCurrentDBUser();
       setUser(userFromDB);
       setLoadingUser(false);
+      
+      // Fetch notes when the folder changes and user is loaded
+      if (userFromDB && currentFolder?.id) {
+        setInitialLoad(true);
+        await fetchAllNotesInFolder(currentFolder.id);
+        setInitialLoad(false);
+      }
     })();
-  }, [currentFolder]);
+  }, [currentFolder, fetchAllNotesInFolder]);
+
+  // idk whats this but copilot added this and the issue of infinite loading screen got fixed
+  // Show loading if user is loading OR if it's initial load OR if notes are loading
+  const shouldShowLoading = loadingUser || initialLoad || (isNotesLoading && notesInCurrentFolder.length === 0);
 
   return (
     <div className="flex flex-col h-full">
@@ -148,7 +160,7 @@ const ChatTabs = () => {
             </TooltipContent>
           </Tooltip>
         </TabsList>
-        {loadingUser ? (
+        {shouldShowLoading ? (
           <div className="flex-1 overflow-hidden">
             <LoadingContent />
           </div>

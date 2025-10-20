@@ -19,6 +19,7 @@ import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { syncClerkUserToDB } from "@/actions/user.actions";
+import Link from "next/link";
 
 export default function NavbarDemo() {
   const { isLoaded, user } = useUser();
@@ -118,30 +119,53 @@ export default function NavbarDemo() {
             onClose={() => setIsMobileMenuOpen(false)}
           >
             {navItems.map((item, idx) => (
-              <a
+              <Link
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="relative text-neutral-600 dark:text-neutral-300"
               >
                 <span className="block">{item.name}</span>
-              </a>
+              </Link>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Login
-              </NavbarButton>
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Book a call
-              </NavbarButton>
+              {isLoaded && user ? (
+                <>
+                  <div className="flex items-center gap-3 p-2">
+                    <div className="grid place-content-center border-2 border-primary rounded-full p-0.5">
+                      <Avatar>
+                        <AvatarImage
+                          src={user.imageUrl}
+                          alt="avatar"
+                        />
+                        <AvatarFallback>{user.firstName?.charAt(1)}{user.lastName?.charAt(1)}</AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{user.firstName} {user.lastName}</span>
+                      <span className="text-xs text-neutral-500">{user.primaryEmailAddress?.emailAddress}</span>
+                    </div>
+                  </div>
+                  <SignOutButton>
+                    <Button 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Sign Out
+                    </Button>
+                  </SignOutButton>
+                </>
+              ) : (
+                <SignInButton mode="modal" forceRedirectUrl={"/dashboard"}>
+                  <NavbarButton
+                    variant="primary"
+                    className="w-full cursor-pointer"
+                  >
+                    Sign In
+                  </NavbarButton>
+                </SignInButton>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>
