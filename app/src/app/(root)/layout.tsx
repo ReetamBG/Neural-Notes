@@ -1,16 +1,12 @@
 import RootNavbar from "@/components/RootNavbar";
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import React from "react";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <>
+    <div className="min-h-screen w-full relative">
       <RootNavbar />
-      <div className="min-h-screen w-full relative">
-        <BackgroundRippleEffect cellSize={70} />
-        {children}
-      </div>
-    </>
+      {children}
+    </div>
   );
 };
 

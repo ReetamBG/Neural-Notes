@@ -3,6 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 :root {
   --background: oklch(0.9777 0.0041 301.4256);
   --foreground: oklch(0.3651 0.0325 287.0807);
@@ -167,6 +168,10 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @theme inline {

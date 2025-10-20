@@ -322,6 +322,7 @@ const AnalyzeNoteButton = ({ note }: { note: Note }) => {
 // Tutor-like Analysis Display Component (Formatted by AI dont ask me)
 const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
   const getAccuracyMessage = (accuracy: number) => {
+    accuracy = accuracy * 100; // Convert to percentage
     if (accuracy >= 90) {
       return {
         message:
@@ -369,7 +370,7 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
         <div className="flex items-center gap-2 mb-3">
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-base font-semibold text-foreground">
-            Your Study Score: {Math.round(analysis.accuracy * 100) / 100}%
+            Your Study Score: {Math.round(analysis.accuracy * 100)}%
           </h3>
         </div>
         <p className={`text-sm ${accuracyInfo.color} mb-3`}>
