@@ -99,7 +99,7 @@ const Page = () => {
         ) : (
           <>
             {notesInCurrentFolder.length === 0 ? (
-              <Card className="my-4 py-2">
+              <Card className="my-4 py-2 bg-card/70 border-0 border-b-4">
                 <CardContent>
                   <p className="text-center text-muted-foreground">
                     No notes found in this folder.
@@ -127,7 +127,7 @@ const NoteCard = ({ note }: { note: Note }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   return (
-    <Card key={note.id} className="my-4 py-2">
+    <Card key={note.id} className="my-4 py-2 bg-card/70 border-0 border-b-4">
       <CardHeader>
         <CardTitle className="text-accent-foreground text-lg sm:text-2xl">
           {note.title}

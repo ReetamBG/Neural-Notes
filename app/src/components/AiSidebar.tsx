@@ -12,7 +12,7 @@ import {
 import useSidebarStore from "@/store/sidebar.store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, isFileSizeValid } from "@/lib/utils";
 import useNotesStore from "@/store/notes.store";
 import { getCurrentDBUser } from "@/actions/user.actions";
 import { FileUpload } from "./ui/file-upload";
@@ -99,67 +99,71 @@ const ChatTabs = () => {
   }, [currentFolder]);
 
   return (
-    <Tabs defaultValue="doc-chat" className="w-full h-full">
-      <TabsList className="w-full grid grid-cols-2 gap-0 p-0">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <TabsTrigger
-              onClick={() => setSelectedTab("doc-chat")}
-              value="doc-chat"
-              className={cn(
-                "w-full",
-                selectedTab === "doc-chat"
-                  ? "bg-accent text-accent-foreground"
-                  : ""
-              )}
-            >
-              Chat with doc
-            </TabsTrigger>
-          </TooltipTrigger>
-          <TooltipContent className="z-100">
-            <p>
-              Chat with the document
-              <br />
-              uploaded in this folder
-            </p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <TabsTrigger
-              onClick={() => setSelectedTab("notes-chat")}
-              value="notes-chat"
-              className={cn(
-                "w-full",
-                selectedTab === "notes-chat"
-                  ? "bg-accent text-accent-foreground"
-                  : ""
-              )}
-            >
-              Chat with notes
-            </TabsTrigger>
-          </TooltipTrigger>
-          <TooltipContent className="z-100">
-            <p>
-              Chat with your notes
-              <br /> in this folder.
-            </p>
-          </TooltipContent>
-        </Tooltip>
-      </TabsList>
-      {loadingUser ? (
-        <LoadingContent />
-      ) : (
-        <>
-          <TabsContent value="doc-chat" className="h-full">
-            <DocChat userId={user!.id} currentFolder={currentFolder!} />
-          </TabsContent>
-          <TabsContent value="notes-chat">
-            <NotesChat userId={user!.id} currentFolder={currentFolder!} />
-          </TabsContent>
-        </>
-      )}
-    </Tabs>
+    <div className="flex flex-col h-full">
+      <Tabs defaultValue="doc-chat" className="flex flex-col h-full">
+        <TabsList className="w-full grid grid-cols-2 gap-0 p-0 flex-shrink-0">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger
+                onClick={() => setSelectedTab("doc-chat")}
+                value="doc-chat"
+                className={cn(
+                  "w-full",
+                  selectedTab === "doc-chat"
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                )}
+              >
+                Chat with doc
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent className="z-100">
+              <p>
+                Chat with the document
+                <br />
+                uploaded in this folder
+              </p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger
+                onClick={() => setSelectedTab("notes-chat")}
+                value="notes-chat"
+                className={cn(
+                  "w-full",
+                  selectedTab === "notes-chat"
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                )}
+              >
+                Chat with notes
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent className="z-100">
+              <p>
+                Chat with your notes
+                <br /> in this folder.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TabsList>
+        {loadingUser ? (
+          <div className="flex-1 overflow-hidden">
+            <LoadingContent />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="doc-chat" className="flex-1 overflow-hidden mt-2">
+              <DocChat userId={user!.id} currentFolder={currentFolder!} />
+            </TabsContent>
+            <TabsContent value="notes-chat" className="flex-1 overflow-hidden mt-2">
+              <NotesChat userId={user!.id} currentFolder={currentFolder!} />
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
+    </div>
   );
 };
 
@@ -183,6 +187,11 @@ const DocChat = ({
 
   const handleFileUpload = async (files: File[]) => {
     if (!currentFolder || !userId) return;
+
+    if (!isFileSizeValid(files[0], 30)) {
+      toast.error("File size exceeds the 50MB limit. Please upload a smaller file.");
+      return;
+    }
 
     setIsUploading(true);
     const res = await uploadDocument(files[0], userId, currentFolder.id);
@@ -217,38 +226,45 @@ const DocChat = ({
 
   if (docVectorDBExists) {
     return (
-      <div className="flex justify-center flex-col h-full">
+      <div className="flex flex-col h-full">
         {isNotesLoading ? (
-          <LoadingContent />
+          <div className="flex-1 overflow-hidden">
+            <LoadingContent />
+          </div>
         ) : (
           <>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                fileInputRef.current?.click();
-              }}
-            >
-              <input
-                type="file"
-                accept=".pdf,.mp4"
-                hidden
-                ref={fileInputRef}
-                onChange={async (e) => {
-                  if (e.target.files?.length) {
-                    await handleFileUpload(Array.from(e.target.files));
-                    e.target.value = ""; // reset input so same file can be re-uploaded
-                  }
+            <div className="flex-shrink-0 mb-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  fileInputRef.current?.click();
                 }}
-              />
-              Upload New <PlusCircle />{" "}
-            </Button>
+                className="w-full"
+              >
+                <input
+                  type="file"
+                  accept=".pdf,.mp4"
+                  hidden
+                  ref={fileInputRef}
+                  onChange={async (e) => {
+                    if (e.target.files?.length) {
+                      await handleFileUpload(Array.from(e.target.files));
+                      e.target.value = ""; // reset input so same file can be re-uploaded
+                    }
+                  }}
+                />
+                Upload New <PlusCircle />{" "}
+              </Button>
+            </div>
 
-            <ChatBot
-              url="/api/v1/chat"
-              userId={userId}
-              currentFolderId={currentFolder.id}
-            />
+            <div className="flex-1 overflow-hidden">
+              <ChatBot
+                url="/api/v1/chat"
+                userId={userId}
+                currentFolderId={currentFolder.id}
+              />
+            </div>
           </>
         )}
       </div>
@@ -324,20 +340,26 @@ const NotesChat = ({
 
   if (notesVectorDBExists) {
     return (
-      <div className="flex justify-center flex-col h-full">
+      <div className="flex flex-col h-full">
         {isNotesLoading ? (
-          <LoadingContent />
+          <div className="flex-1 overflow-hidden">
+            <LoadingContent />
+          </div>
         ) : (
           <>
-            <Button variant="outline" size="sm" onClick={handleNotesUpload}>
-              Refresh Notes <RefreshCcw />
-            </Button>
+            <div className="flex-shrink-0 mb-2">
+              <Button variant="outline" size="sm" onClick={handleNotesUpload} className="w-full">
+                Refresh Notes <RefreshCcw />
+              </Button>
+            </div>
 
-            <ChatBot
-              url="/api/v1/chat/notes"
-              userId={userId}
-              currentFolderId={currentFolder.id}
-            />
+            <div className="flex-1 overflow-hidden">
+              <ChatBot
+                url="/api/v1/chat/notes"
+                userId={userId}
+                currentFolderId={currentFolder.id}
+              />
+            </div>
           </>
         )}
       </div>
