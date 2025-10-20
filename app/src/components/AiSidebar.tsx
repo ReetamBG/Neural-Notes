@@ -9,12 +9,7 @@ import {
   SidebarProvider,
   useSidebar,
 } from "./ui/sidebar";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "./ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import useSidebarStore from "@/store/sidebar.store";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -119,12 +114,11 @@ export default AiSidebar;
 // THIS COMPONENT ADDED FULLY BY COPILOT
 // Mobile version of ChatTabs (no sidebar components)
 const MobileChatTabs = () => {
-  const { currentFolder, fetchAllNotesInFolder, notesInCurrentFolder, isNotesLoading } = useNotesStore();
+  const { currentFolder } = useNotesStore();
   const [selectedTab, setSelectedTab] = useState<"doc-chat" | "notes-chat">(
     "doc-chat"
   );
   const [loadingUser, setLoadingUser] = useState(true);
-  const [initialLoad, setInitialLoad] = useState(true);
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -133,18 +127,8 @@ const MobileChatTabs = () => {
       const userFromDB = await getCurrentDBUser();
       setUser(userFromDB);
       setLoadingUser(false);
-      
-      // Fetch notes when the folder changes and user is loaded
-      if (userFromDB && currentFolder?.id) {
-        setInitialLoad(true);
-        await fetchAllNotesInFolder(currentFolder.id);
-        setInitialLoad(false);
-      }
     })();
-  }, [currentFolder, fetchAllNotesInFolder]);
-
-  // Show loading if user is loading OR if it's initial load OR if notes are loading
-  const shouldShowLoading = loadingUser || initialLoad || (isNotesLoading && notesInCurrentFolder.length === 0);
+  }, [currentFolder]);
 
   return (
     <div className="flex flex-col h-full">
@@ -196,19 +180,23 @@ const MobileChatTabs = () => {
             </TooltipContent>
           </Tooltip>
         </TabsList>
-        {shouldShowLoading ? (
-          <div className="flex-1 overflow-hidden">
-            <LoadingContent />
-          </div>
-        ) : (
+        {(user && currentFolder) ? (
           <>
-            <TabsContent value="doc-chat" className="flex-1 overflow-hidden mt-2">
+            <TabsContent
+              value="doc-chat"
+              className="flex-1 overflow-hidden mt-2"
+            >
               <DocChat userId={user!.id} currentFolder={currentFolder!} />
             </TabsContent>
-            <TabsContent value="notes-chat" className="flex-1 overflow-hidden mt-2">
+            <TabsContent
+              value="notes-chat"
+              className="flex-1 overflow-hidden mt-2"
+            >
               <NotesChat userId={user!.id} currentFolder={currentFolder!} />
             </TabsContent>
           </>
+        ) : (
+          <LoadingContent />
         )}
       </Tabs>
     </div>
@@ -216,12 +204,11 @@ const MobileChatTabs = () => {
 };
 
 const ChatTabs = () => {
-  const { currentFolder, fetchAllNotesInFolder, notesInCurrentFolder, isNotesLoading } = useNotesStore();
+  const { currentFolder } = useNotesStore();
   const [selectedTab, setSelectedTab] = useState<"doc-chat" | "notes-chat">(
     "doc-chat"
   );
   const [loadingUser, setLoadingUser] = useState(true);
-  const [initialLoad, setInitialLoad] = useState(true);
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -230,19 +217,8 @@ const ChatTabs = () => {
       const userFromDB = await getCurrentDBUser();
       setUser(userFromDB);
       setLoadingUser(false);
-      
-      // Fetch notes when the folder changes and user is loaded
-      if (userFromDB && currentFolder?.id) {
-        setInitialLoad(true);
-        await fetchAllNotesInFolder(currentFolder.id);
-        setInitialLoad(false);
-      }
     })();
-  }, [currentFolder, fetchAllNotesInFolder]);
-
-  // idk whats this but copilot added this and the issue of infinite loading screen got fixed
-  // Show loading if user is loading OR if it's initial load OR if notes are loading
-  const shouldShowLoading = loadingUser || initialLoad || (isNotesLoading && notesInCurrentFolder.length === 0);
+  }, [currentFolder]);
 
   return (
     <div className="flex flex-col h-full">
@@ -294,19 +270,23 @@ const ChatTabs = () => {
             </TooltipContent>
           </Tooltip>
         </TabsList>
-        {shouldShowLoading ? (
-          <div className="flex-1 overflow-hidden">
-            <LoadingContent />
-          </div>
-        ) : (
+        {(user && currentFolder) ? (
           <>
-            <TabsContent value="doc-chat" className="flex-1 overflow-hidden mt-2">
+            <TabsContent
+              value="doc-chat"
+              className="flex-1 overflow-hidden mt-2"
+            >
               <DocChat userId={user!.id} currentFolder={currentFolder!} />
             </TabsContent>
-            <TabsContent value="notes-chat" className="flex-1 overflow-hidden mt-2">
+            <TabsContent
+              value="notes-chat"
+              className="flex-1 overflow-hidden mt-2"
+            >
               <NotesChat userId={user!.id} currentFolder={currentFolder!} />
             </TabsContent>
           </>
+        ) : (
+          <LoadingContent />
         )}
       </Tabs>
     </div>
@@ -326,7 +306,7 @@ const DocChat = ({
 
   useEffect(() => {
     (async () => {
-      const vectorDbStatus = await getVectorDbStatus(userId, currentFolder.id)
+      const vectorDbStatus = await getVectorDbStatus(userId, currentFolder.id);
       setDocVectorDBExists(vectorDbStatus);
     })();
   }, [userId, currentFolder]);
@@ -335,7 +315,9 @@ const DocChat = ({
     if (!currentFolder || !userId) return;
 
     if (!isFileSizeValid(files[0], 30)) {
-      toast.error("File size exceeds the 50MB limit. Please upload a smaller file.");
+      toast.error(
+        "File size exceeds the 50MB limit. Please upload a smaller file."
+      );
       return;
     }
 
@@ -433,7 +415,7 @@ const NotesChat = ({
 
   useEffect(() => {
     (async () => {
-      const vectorDbStatus = await getVectorDbStatus(userId, currentFolder.id)
+      const vectorDbStatus = await getVectorDbStatus(userId, currentFolder.id);
       setNotesVectorDBExists(vectorDbStatus);
     })();
   }, [currentFolder, userId]);
@@ -494,7 +476,12 @@ const NotesChat = ({
         ) : (
           <>
             <div className="flex-shrink-0 mb-2">
-              <Button variant="outline" size="sm" onClick={handleNotesUpload} className="w-full">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNotesUpload}
+                className="w-full"
+              >
                 Refresh Notes <RefreshCcw />
               </Button>
             </div>
