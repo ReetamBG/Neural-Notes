@@ -71,8 +71,8 @@ export default function FolderSidebar() {
   if (isMobile) {
     return (
       <Sheet open={foldersSidebarOpen} onOpenChange={toggleFoldersSidebar}>
-        <SheetContent side="left" className="w-72 p-0">
-          <SheetHeader className="p-4 pb-2">
+        <SheetContent side="left" className="w-72 p-0" style={{ zIndex: 110 }}>
+          <SheetHeader className="p-4 pb-2 pt-16">
             <SheetTitle className="flex justify-between items-center">
               <span>Folders</span>
               <NewFolderDialog />
@@ -295,7 +295,7 @@ const NewFolderDialog = () => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="z-[120]">
         <DialogHeader>
           <DialogTitle>Folder name</DialogTitle>
           <DialogDescription className="sr-only" />

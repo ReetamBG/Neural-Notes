@@ -9,7 +9,14 @@ import {
   SidebarProvider,
   useSidebar,
 } from "./ui/sidebar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "./ui/sheet";
 import useSidebarStore from "@/store/sidebar.store";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { cn, isFileSizeValid } from "@/lib/utils";
@@ -32,7 +39,35 @@ import {
 import LoadingContent from "./LoadingContent";
 
 const AiSidebar = () => {
-  const { aiSidebarOpen } = useSidebarStore();
+  const { aiSidebarOpen, toggleAiSidebar } = useSidebarStore();
+  const { currentFolder } = useNotesStore();
+  const isMobile = useIsMobile();
+
+  // Mobile version using Sheet
+  if (isMobile) {
+    return (
+      <Sheet open={aiSidebarOpen} onOpenChange={toggleAiSidebar}>
+        <SheetContent side="right" className="w-80 p-0" style={{ zIndex: 110 }}>
+          <SheetHeader className="p-4 pb-2 pt-16">
+            <SheetTitle>AI Chat</SheetTitle>
+          </SheetHeader>
+          <div className="px-4 pb-4 flex-1 overflow-auto">
+            {currentFolder ? (
+              <MobileChatTabs />
+            ) : (
+              <p className="text-muted-foreground text-base text-center h-full flex items-center w-full justify-center">
+                Please select a <br />
+                folder to chat with its
+                <br /> documents or notes.
+              </p>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop version - unchanged logic
   return (
     <SidebarProvider
       className={`${
@@ -80,6 +115,105 @@ const AiSidebarContent = () => {
 };
 
 export default AiSidebar;
+
+// THIS COMPONENT ADDED FULLY BY COPILOT
+// Mobile version of ChatTabs (no sidebar components)
+const MobileChatTabs = () => {
+  const { currentFolder, fetchAllNotesInFolder, notesInCurrentFolder, isNotesLoading } = useNotesStore();
+  const [selectedTab, setSelectedTab] = useState<"doc-chat" | "notes-chat">(
+    "doc-chat"
+  );
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
+
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    (async () => {
+      setLoadingUser(true);
+      const userFromDB = await getCurrentDBUser();
+      setUser(userFromDB);
+      setLoadingUser(false);
+      
+      // Fetch notes when the folder changes and user is loaded
+      if (userFromDB && currentFolder?.id) {
+        setInitialLoad(true);
+        await fetchAllNotesInFolder(currentFolder.id);
+        setInitialLoad(false);
+      }
+    })();
+  }, [currentFolder, fetchAllNotesInFolder]);
+
+  // Show loading if user is loading OR if it's initial load OR if notes are loading
+  const shouldShowLoading = loadingUser || initialLoad || (isNotesLoading && notesInCurrentFolder.length === 0);
+
+  return (
+    <div className="flex flex-col h-full">
+      <Tabs defaultValue="doc-chat" className="flex flex-col h-full">
+        <TabsList className="w-full grid grid-cols-2 gap-0 p-0 flex-shrink-0">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger
+                onClick={() => setSelectedTab("doc-chat")}
+                value="doc-chat"
+                className={cn(
+                  "w-full",
+                  selectedTab === "doc-chat"
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                )}
+              >
+                Chat with doc
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent className="z-100">
+              <p>
+                Chat with the document
+                <br />
+                uploaded in this folder
+              </p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger
+                onClick={() => setSelectedTab("notes-chat")}
+                value="notes-chat"
+                className={cn(
+                  "w-full",
+                  selectedTab === "notes-chat"
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                )}
+              >
+                Chat with notes
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent className="z-100">
+              <p>
+                Chat with your notes
+                <br /> in this folder.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TabsList>
+        {shouldShowLoading ? (
+          <div className="flex-1 overflow-hidden">
+            <LoadingContent />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="doc-chat" className="flex-1 overflow-hidden mt-2">
+              <DocChat userId={user!.id} currentFolder={currentFolder!} />
+            </TabsContent>
+            <TabsContent value="notes-chat" className="flex-1 overflow-hidden mt-2">
+              <NotesChat userId={user!.id} currentFolder={currentFolder!} />
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
+    </div>
+  );
+};
 
 const ChatTabs = () => {
   const { currentFolder, fetchAllNotesInFolder, notesInCurrentFolder, isNotesLoading } = useNotesStore();
