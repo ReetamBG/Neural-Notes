@@ -19,8 +19,8 @@ export default async function Home() {
           Learn smarter with your notes
         </h2>
         <p className="mt-8 text-neutral-400 max-w-lg mx-auto my-2 text-sm md:text-base 2xl:text-xl text-center relative z-10">
-          Turn your notes, PDFs, and videos into an AI study companion — chat
-          with your material, uncover weak spots, and get personalized roadmaps
+          Turn your notes, PDFs, and videos into an AI study companion -
+          Interact with your material, uncover weak spots, and get personalized roadmaps
           to master any topic.
         </p>
         <div className="mt-6 flex items-center justify-center gap-4 relative z-10">

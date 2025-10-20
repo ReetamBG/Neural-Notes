@@ -224,13 +224,37 @@ class VectorStoreService:
         return retriever
     
     def create_qa_chain(self, llm: ChatOpenAI, vector_db_path: Path) -> RetrievalQA:
-        """Create a RetrievalQA chain."""
+        """Create a RetrievalQA chain with educational prompting."""
         retriever = self.get_retriever(vector_db_path)
+        
+        # Custom prompt template for educational context
+        from langchain.prompts import PromptTemplate
+        
+        template = """You are an AI tutor helping students learn from academic material. Use the following context to answer the student's question in an educational and supportive manner.
+
+Context: {context}
+
+Question: {question}
+
+Instructions:
+- Provide clear, educational explanations
+- Use examples when helpful
+- Break down complex concepts
+- Maintain an encouraging tone
+- Focus on helping the student understand
+
+Answer:"""
+        
+        prompt = PromptTemplate(
+            template=template,
+            input_variables=["context", "question"]
+        )
         
         return RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff",
-            retriever=retriever
+            retriever=retriever,
+            # chain_type_kwargs={"prompt": prompt}  # Use this for system prompt if needed
         )
 
 

@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     # OpenRouter API Configuration
     openrouter_api_key: str = os.getenv("OPENROUTER_API_KEY")
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
-    # default_model: str = "deepseek/deepseek-chat-v3-0324:free"
-    default_model: str = "x-ai/grok-4-fast"
+    # default_model: str = "anthropic/claude-3.5-sonnet"   # best reasoning with okay response time
+    default_model: str = "openai/gpt-4o-mini"    # faster responses with okay reasoning
     
     # File Upload Configuration
     max_upload_size: int = 50 * 1024 * 1024  # 50MB
@@ -46,6 +46,9 @@ class Settings(BaseSettings):
     # Analysis Configuration
     similarity_threshold: float = 0.7
     top_keywords: int = 5
+    
+    # LLM Response Configuration
+    remove_markdown_formatting: bool = True
     
     # CORS Configuration
     allowed_origins: List[str] = ["*"]

@@ -1,6 +1,7 @@
 """File handling utilities."""
 
 import os
+import re
 import shutil
 from pathlib import Path
 from typing import List
@@ -10,6 +11,44 @@ from fastapi import UploadFile
 from app.core.config import get_settings
 
 settings = get_settings()
+
+
+def remove_markdown_formatting(text: str) -> str:
+    """Remove markdown formatting from text."""
+    if not text:
+        return text
+    
+    # Remove markdown headers
+    text = re.sub(r'^#{1,6}\s+', '', text, flags=re.MULTILINE)
+    
+    # Remove bold and italic formatting
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # Bold
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)      # Italic
+    text = re.sub(r'__([^_]+)__', r'\1', text)      # Bold
+    text = re.sub(r'_([^_]+)_', r'\1', text)        # Italic
+    
+    # Remove code blocks and inline code
+    text = re.sub(r'```[^`]*```', '', text, flags=re.DOTALL)
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+    
+    # Remove markdown links [text](url) -> text
+    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
+    
+    # Remove markdown lists formatting
+    text = re.sub(r'^\s*[-*+]\s+', '- ', text, flags=re.MULTILINE)
+    text = re.sub(r'^\s*\d+\.\s+', lambda m: f"{m.group().strip()[:-1]}. ", text, flags=re.MULTILINE)
+    
+    # Remove blockquotes
+    text = re.sub(r'^>\s*', '', text, flags=re.MULTILINE)
+    
+    # Remove horizontal rules
+    text = re.sub(r'^[-*_]{3,}$', '', text, flags=re.MULTILINE)
+    
+    # Clean up extra whitespace
+    text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)
+    text = text.strip()
+    
+    return text
 
 
 async def save_upload_file(file: UploadFile, destination: Path) -> Path:

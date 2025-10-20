@@ -15,6 +15,14 @@ import useSidebarStore from "@/store/sidebar.store";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Bot, Folder } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const NotesNavbar = () => {
   const { isLoaded, user } = useUser();
@@ -71,20 +79,43 @@ const NotesNavbar = () => {
 
         {/* User avatar and signout */}
         {isLoaded && user && (
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block p-0.5 rounded-full border-2 border-primary">
-              <Avatar className="size-6">
-                <AvatarImage src={user?.imageUrl} />
-                <AvatarFallback>
-                  {user?.firstName?.charAt(0)}
-                  {user?.lastName?.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+          <>
+            <div className="hidden sm:flex  items-center gap-4">
+              <div className=" p-0.5 rounded-full border-2 border-primary">
+                <Avatar className="size-6">
+                  <AvatarImage src={user?.imageUrl} />
+                  <AvatarFallback>
+                    {user?.firstName?.charAt(0)}
+                    {user?.lastName?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <SignOutButton>
+                <Button variant="outline">Sign Out</Button>
+              </SignOutButton>
             </div>
-            <SignOutButton>
-              <Button variant="outline">Sign Out</Button>
-            </SignOutButton>
-          </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="block sm:hidden">
+                <div className=" p-0.5 rounded-full border-2 border-primary">
+                  <Avatar className="size-6">
+                    <AvatarImage src={user?.imageUrl} />
+                    <AvatarFallback>
+                      {user?.firstName?.charAt(0)}
+                      {user?.lastName?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <SignOutButton>
+                    <Button variant="outline">Sign Out</Button>
+                  </SignOutButton>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         )}
       </header>
     </>
