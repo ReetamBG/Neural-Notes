@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { cn } from "@/lib/utils";
 import useNotesStore from "@/store/notes.store";
-import axios from "@/lib/axios";
 import { getCurrentDBUser } from "@/actions/user.actions";
 import { FileUpload } from "./ui/file-upload";
 import { Folder, User } from "@/generated/prisma";
@@ -26,6 +25,7 @@ import { PlusCircle, RefreshCcw } from "lucide-react";
 import { motion } from "motion/react";
 import {
   fetchAllNotesContent,
+  getVectorDbStatus,
   uploadDocument,
   uploadNotes,
 } from "@/actions/ai.actions";
@@ -176,14 +176,8 @@ const DocChat = ({
 
   useEffect(() => {
     (async () => {
-      const docVecDbStatus = await axios.post(
-        "/api/v1/chat/doc-vector-db-exist",
-        {
-          user_id: userId,
-          folder_id: currentFolder.id,
-        }
-      );
-      setDocVectorDBExists(docVecDbStatus.data.status);
+      const vectorDbStatus = await getVectorDbStatus(userId, currentFolder.id)
+      setDocVectorDBExists(vectorDbStatus);
     })();
   }, [userId, currentFolder]);
 
@@ -277,14 +271,8 @@ const NotesChat = ({
 
   useEffect(() => {
     (async () => {
-      const notesVecDbStatus = await axios.post(
-        "/api/v1/chat/notes-vector-db-exist",
-        {
-          user_id: userId,
-          folder_id: currentFolder.id,
-        }
-      );
-      setNotesVectorDBExists(notesVecDbStatus.data.status);
+      const vectorDbStatus = await getVectorDbStatus(userId, currentFolder.id)
+      setNotesVectorDBExists(vectorDbStatus);
     })();
   }, [currentFolder, userId]);
 

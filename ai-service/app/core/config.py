@@ -3,9 +3,11 @@
 import os
 from pathlib import Path
 from typing import List
+from dotenv import load_dotenv
 
 from pydantic_settings import BaseSettings
 
+load_dotenv()
 
 class Settings(BaseSettings):
     """Application settings."""
@@ -16,7 +18,7 @@ class Settings(BaseSettings):
     debug: bool = True
     
     # OpenRouter API Configuration
-    openrouter_api_key: str = "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"
+    openrouter_api_key: str = os.getenv("OPENROUTER_API_KEY")
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
     # default_model: str = "deepseek/deepseek-chat-v3-0324:free"
     default_model: str = "x-ai/grok-4-fast"

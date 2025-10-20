@@ -9,8 +9,6 @@ from app.models import (
     ChatRequest,
     ChatResponse,
     ChatWithNotesRequest,
-    NotesRequest,
-    SuccessResponse,
     VectorDBExistsRequest,
     StatusResponse
 )
@@ -46,6 +44,7 @@ async def chat_with_document(request: ChatRequest):
         return ChatResponse(message=response)
         
     except Exception as e:
+        print("Error in chat_with_document: ", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Chat failed: {str(e)}"
@@ -78,6 +77,7 @@ async def chat_with_notes(request: ChatWithNotesRequest):
         return ChatResponse(message=response)
         
     except Exception as e:
+        print("Error in chat_with_notes: ", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Chat failed: {str(e)}"

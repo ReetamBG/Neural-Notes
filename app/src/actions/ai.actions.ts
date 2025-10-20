@@ -81,3 +81,53 @@ export const fetchAllNotesContent = async (
     return null;
   }
 };
+
+export interface NoteAnalysisResult {
+  accuracy: number;   // accuracy of the note compared to the reference material
+  llm_note: string;   // a note from llm
+  missing_info: string[];
+  missing_keywords: string[];
+  roadmap: string[]
+}
+// analyze a single note
+export const analyzeNote = async (
+  noteTitle: string,
+  noteContent: string,
+  userId: string,
+  folderId: string
+) => {
+  try {
+    const data = {
+      title: noteTitle,
+      text: noteContent,
+      user_id: userId,
+      folder_id: folderId,
+    };
+
+    const url = "/api/v1/analysis/";
+
+    const response = await axios.post(url, data);
+    return response.data as NoteAnalysisResult;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const getVectorDbStatus = async (userId: string, folderId: string): Promise<boolean> => {
+  try {
+    const docVecDbStatus = await axios.post(
+      "/api/v1/chat/doc-vector-db-exist",
+      {
+        user_id: userId,
+        folder_id: folderId,
+      }
+    );
+
+    console.log(docVecDbStatus.data.status);
+    return docVecDbStatus.data.status;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};

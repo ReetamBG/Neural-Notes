@@ -71,6 +71,7 @@ async def analyze_text(request: AnalysisRequest):
         )
         
     except Exception as e:
+        print("Error analyze_text: ", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Analysis failed: {str(e)}"

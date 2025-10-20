@@ -50,6 +50,7 @@ async def upload_pdf(file: Annotated[UploadFile, File()], user_id: Annotated[str
         return SuccessResponse(message="PDF processed successfully")
         
     except Exception as e:
+        print("Error in upload_pdf: " + e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process PDF: {str(e)}"
@@ -99,6 +100,7 @@ async def upload_video(file: Annotated[UploadFile, File()], user_id: Annotated[s
         return SuccessResponse(message="Video processed successfully")
         
     except Exception as e:
+        print("Error in upload_video: " + e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process video: {str(e)}"
@@ -128,6 +130,7 @@ async def upload_notes(request: NotesRequest):
         return SuccessResponse(message="Notes processed successfully")
         
     except Exception as e:
+        print("Error in upload_notes: ", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process notes: {str(e)}"
