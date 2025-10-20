@@ -37,6 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Note } from "@/generated/prisma/wasm";
+import { useIsMobile } from "@/hooks/use-mobile";
 import useNotesStore from "@/store/notes.store";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -123,6 +124,7 @@ const Page = () => {
 };
 
 const NoteCard = ({ note }: { note: Note }) => {
+  const isMobile = useIsMobile();
   const { currentFolder, deleteNote } = useNotesStore();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -133,7 +135,11 @@ const NoteCard = ({ note }: { note: Note }) => {
           {note.title}
         </CardTitle>
         <CardDescription className="text-foreground text-base">
-          {note.contentString?.slice(0, 100)}...
+          {isMobile ? (
+            <> {note.contentString?.slice(0, 20)}...</>
+          ) : (
+            <> {note.contentString?.slice(0, 100)}...</>
+          )}
         </CardDescription>
         <CardAction className="flex gap-2 flex-col lg:flex-row">
           <Tooltip>
@@ -188,7 +194,6 @@ const NoteCard = ({ note }: { note: Note }) => {
 
 export default Page;
 
-
 const AnalyzeNoteButton = ({ note }: { note: Note }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [noteAnalysisResult, setNoteAnalysisResult] =
@@ -212,8 +217,8 @@ const AnalyzeNoteButton = ({ note }: { note: Note }) => {
     const vectorDbStatus = await getVectorDbStatus(user!.id, currentFolder.id);
     if (!vectorDbStatus) {
       toast.error("Please upload a reference material first");
-      setIsAnalyzing(false)
-      return
+      setIsAnalyzing(false);
+      return;
     }
 
     const res = await analyzeNote(
@@ -276,7 +281,10 @@ const AnalyzeNoteButton = ({ note }: { note: Note }) => {
               ) : (
                 <div className="text-center text-muted-foreground py-8">
                   <BookOpen className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>Ready to analyze your notes? Click the button below to get started!</p>
+                  <p>
+                    Ready to analyze your notes? Click the button below to get
+                    started!
+                  </p>
                 </div>
               )}
             </div>
@@ -295,13 +303,14 @@ const AnalyzeNoteButton = ({ note }: { note: Note }) => {
                   e.preventDefault();
                   handleAnalyzeNote();
                 }}
-              >{
-                noteAnalysisResult ? "Reanalyze Note" : "Start analyzing"
-              }
+              >
+                {noteAnalysisResult ? "Reanalyze Note" : "Start analyzing"}
               </Button>
             )}
             <DrawerClose asChild>
-              <Button onClick={()=> setIsAnalyzing(false)} variant="outline">Cancel</Button>
+              <Button onClick={() => setIsAnalyzing(false)} variant="outline">
+                Cancel
+              </Button>
             </DrawerClose>
           </div>
         </DrawerFooter>
@@ -310,39 +319,43 @@ const AnalyzeNoteButton = ({ note }: { note: Note }) => {
   );
 };
 
-
 // Tutor-like Analysis Display Component (Formatted by AI dont ask me)
 const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
   const getAccuracyMessage = (accuracy: number) => {
     if (accuracy >= 90) {
       return {
-        message: "Excellent work! 🎉 Your notes are comprehensive and accurate. You've mastered this topic!",
+        message:
+          "Excellent work! 🎉 Your notes are comprehensive and accurate. You've mastered this topic!",
         color: "text-foreground",
-        bgColor: "bg-muted/20 border-muted-foreground/20"
+        bgColor: "bg-muted/20 border-muted-foreground/20",
       };
     } else if (accuracy >= 70) {
       return {
-        message: "Great job! 👍 Your notes are quite good, but there's always room for improvement.",
+        message:
+          "Great job! 👍 Your notes are quite good, but there's always room for improvement.",
         color: "text-foreground",
-        bgColor: "bg-muted/20 border-muted-foreground/20"
+        bgColor: "bg-muted/20 border-muted-foreground/20",
       };
     } else if (accuracy >= 50) {
       return {
-        message: "Good start! 📚 You're on the right track, but let's strengthen your understanding.",
+        message:
+          "Good start! 📚 You're on the right track, but let's strengthen your understanding.",
         color: "text-foreground",
-        bgColor: "bg-muted/20 border-muted-foreground/20"
+        bgColor: "bg-muted/20 border-muted-foreground/20",
       };
     } else if (accuracy >= 30) {
       return {
-        message: "Keep going! 💪 Your notes need some work. Don't worry, we'll help you improve!",
+        message:
+          "Keep going! 💪 Your notes need some work. Don't worry, we'll help you improve!",
         color: "text-foreground",
-        bgColor: "bg-muted/20 border-muted-foreground/20"
+        bgColor: "bg-muted/20 border-muted-foreground/20",
       };
     } else {
       return {
-        message: "Oh dear! 😅 Your notes are quite incomplete. Time to hit the books harder! But don't worry, everyone starts somewhere.",
+        message:
+          "Oh dear! 😅 Your notes are quite incomplete. Time to hit the books harder! But don't worry, everyone starts somewhere.",
         color: "text-foreground",
-        bgColor: "bg-muted/20 border-muted-foreground/20"
+        bgColor: "bg-muted/20 border-muted-foreground/20",
       };
     }
   };
@@ -386,11 +399,12 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             <h3 className="text-base font-semibold text-foreground">
-               Critical Information Missing
+              Critical Information Missing
             </h3>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
-            Hey there! Your notes are missing some important concepts that are essential for understanding this topic:
+            Hey there! Your notes are missing some important concepts that are
+            essential for understanding this topic:
           </p>
           <div className="space-y-2 mb-3">
             {analysis.missing_info.map((info, index) => (
@@ -402,7 +416,9 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
           </div>
           <div className="p-3 bg-muted/20 rounded-md">
             <p className="text-xs text-muted-foreground">
-              💡 <strong>Tutor&apos;s Tip:</strong> These missing pieces are like puzzle parts - without them, the full picture isn&apos;t clear. Try reviewing your source material for these topics!
+              💡 <strong>Tutor&apos;s Tip:</strong> These missing pieces are
+              like puzzle parts - without them, the full picture isn&apos;t
+              clear. Try reviewing your source material for these topics!
             </p>
           </div>
         </div>
@@ -418,7 +434,8 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
             </h3>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
-            These essential keywords are the building blocks of this topic. Including them will make your notes much stronger:
+            These essential keywords are the building blocks of this topic.
+            Including them will make your notes much stronger:
           </p>
           <div className="flex flex-wrap gap-2 mb-3">
             {analysis.missing_keywords.map((keyword, index) => (
@@ -429,7 +446,9 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
           </div>
           <div className="p-3 bg-muted/20 rounded-md">
             <p className="text-xs text-muted-foreground">
-              🎯 <strong>Study Strategy:</strong> Try using these keywords in your notes. They&apos;re like signposts that help navigate the topic!
+              🎯 <strong>Study Strategy:</strong> Try using these keywords in
+              your notes. They&apos;re like signposts that help navigate the
+              topic!
             </p>
           </div>
         </div>
@@ -445,7 +464,8 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
             </h3>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
-            Here&apos;s your personalized study path to master this topic. Follow these steps to improve your understanding:
+            Here&apos;s your personalized study path to master this topic.
+            Follow these steps to improve your understanding:
           </p>
           <div className="space-y-3 mb-3">
             {analysis.roadmap.map((step, index) => (
@@ -453,13 +473,16 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
                 <div className="flex items-center justify-center w-6 h-6 bg-muted text-muted-foreground rounded-full text-xs font-medium mt-0.5 flex-shrink-0">
                   {index + 1}
                 </div>
-                <span className="text-sm text-foreground leading-relaxed">{step}</span>
+                <span className="text-sm text-foreground leading-relaxed">
+                  {step}
+                </span>
               </div>
             ))}
           </div>
           <div className="p-3 bg-muted/20 rounded-md">
             <p className="text-xs text-muted-foreground">
-              🌟 <strong>Motivational Note:</strong> Every expert was once a beginner. Take it one step at a time, and you&apos;ll get there!
+              🌟 <strong>Motivational Note:</strong> Every expert was once a
+              beginner. Take it one step at a time, and you&apos;ll get there!
             </p>
           </div>
         </div>
@@ -474,7 +497,9 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
           </h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          Remember, learning is a journey, not a destination. Each analysis helps you grow stronger. Keep taking notes, keep asking questions, and keep pushing forward. You&apos;ve got this! 💪
+          Remember, learning is a journey, not a destination. Each analysis
+          helps you grow stronger. Keep taking notes, keep asking questions, and
+          keep pushing forward. You&apos;ve got this! 💪
         </p>
       </div>
     </div>

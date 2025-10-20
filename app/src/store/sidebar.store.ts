@@ -9,7 +9,7 @@ interface SidebarStore {
 
 const useSidebarStore = create<SidebarStore>((set) => ({
   aiSidebarOpen: false,
-  foldersSidebarOpen: true,
+  foldersSidebarOpen: false, // Start closed - mobile will use this, desktop ignores it
 
   toggleAiSidebar: () => set((state) => ({ aiSidebarOpen: !state.aiSidebarOpen })),
 

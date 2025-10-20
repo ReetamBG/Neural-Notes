@@ -19,7 +19,15 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import useNotesStore from "@/store/notes.store";
+import useSidebarStore from "@/store/sidebar.store";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -47,18 +55,45 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
 import { Card, CardContent } from "./ui/card";
+import { Folder as FolderType } from "@/generated/prisma";
 
 export default function FolderSidebar() {
   const { folders, fetchAllFolders, currentFolder, isFoldersLoading } =
     useNotesStore();
+  const { foldersSidebarOpen, toggleFoldersSidebar } = useSidebarStore();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchAllFolders();
   }, [fetchAllFolders]);
 
+  // Mobile version using Sheet - toggleable via navbar button
+  if (isMobile) {
+    return (
+      <Sheet open={foldersSidebarOpen} onOpenChange={toggleFoldersSidebar}>
+        <SheetContent side="left" className="w-72 p-0">
+          <SheetHeader className="p-4 pb-2">
+            <SheetTitle className="flex justify-between items-center">
+              <span>Folders</span>
+              <NewFolderDialog />
+            </SheetTitle>
+          </SheetHeader>
+          <div className="px-4 pb-4 flex-1 overflow-auto">
+            <MobileFoldersList 
+              folders={folders} 
+              currentFolder={currentFolder} 
+              isFoldersLoading={isFoldersLoading}
+              onFolderSelect={toggleFoldersSidebar} // Close sheet on mobile when folder is selected
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop version using Sidebar - always visible (non-toggleable)
   return (
-    // <Sidebar variant="inset" className="relative top-12 w-64 h-[calc(100vh-3rem)]">
-    <SidebarProvider className="w-64 ">
+    <SidebarProvider className="w-64">
       <Sidebar
         variant="inset"
         className="relative top-12 w-64 h-[calc(100vh-3rem)] p-0 border-r-1 bg-background"
@@ -70,68 +105,11 @@ export default function FolderSidebar() {
               <NewFolderDialog />
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {isFoldersLoading ? (
-                  <div className="space-y-2">
-                    {Array(3)
-                      .fill(0)
-                      .map((_, idx) => (
-                        <Skeleton key={idx} className="h-8 w-full" />
-                      ))}
-                  </div>
-                ) : (
-                  <>
-                    {folders.length === 0 ? (
-                      <Card className="my-4 py-2">
-                        <CardContent>
-                          <p className="text-center text-muted-foreground">
-                            No folders found.
-                            <br />
-                            <br /> Create a new folder to get started!
-                          </p>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      <>
-                        {folders.map((f) => {
-                          const isSelected = currentFolder?.id === f.id;
-                          return (
-                            <SidebarMenuItem
-                              key={f.id}
-                              onClick={() => {
-                                useNotesStore.setState({ currentFolder: f });
-                              }}
-                              className={cn(
-                                "transition-colors rounded-md",
-                                isSelected
-                                  ? "bg-accent text-accent-foreground"
-                                  : "hover:bg-accent hover:text-accent-foreground"
-                              )}
-                            >
-                              <SidebarMenuButton asChild>
-                                <Link
-                                  href={`/dashboard/folder/${f.id}`}
-                                  className="flex justify-between w-full items-center"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    {isSelected ? (
-                                      <FolderOpen size={20} />
-                                    ) : (
-                                      <Folder size={20} />
-                                    )}
-                                    <span>{f.title}</span>
-                                  </div>
-                                  <DeleteFolderDialog folderId={f.id} />
-                                </Link>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          );
-                        })}
-                      </>
-                    )}
-                  </>
-                )}
-              </SidebarMenu>
+              <DesktopFoldersList 
+                folders={folders} 
+                currentFolder={currentFolder} 
+                isFoldersLoading={isFoldersLoading}
+              />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
@@ -139,6 +117,159 @@ export default function FolderSidebar() {
     </SidebarProvider>
   );
 }
+
+// Mobile-specific folder list component (no sidebar components)
+const MobileFoldersList = ({ 
+  folders, 
+  currentFolder, 
+  isFoldersLoading, 
+  onFolderSelect 
+}: {
+  folders: FolderType[];
+  currentFolder: FolderType | null;
+  isFoldersLoading: boolean;
+  onFolderSelect?: () => void;
+}) => {
+  if (isFoldersLoading) {
+    return (
+      <div className="space-y-2">
+        {Array(3)
+          .fill(0)
+          .map((_, idx) => (
+            <Skeleton key={idx} className="h-8 w-full" />
+          ))}
+      </div>
+    );
+  }
+
+  if (folders.length === 0) {
+    return (
+      <Card className="my-4 py-2">
+        <CardContent>
+          <p className="text-center text-muted-foreground">
+            No folders found.
+            <br />
+            <br /> Create a new folder to get started!
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div>
+      {folders.map((f) => {
+        const isSelected = currentFolder?.id === f.id;
+        return (
+          <div
+            key={f.id}
+            onClick={() => {
+              useNotesStore.setState({ currentFolder: f });
+              onFolderSelect?.(); // Close sheet on mobile when folder is selected
+            }}
+            className={cn(
+              "transition-colors rounded-md mb-1",
+              isSelected
+                ? "bg-accent text-accent-foreground"
+                : "hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <Link
+              href={`/dashboard/folder/${f.id}`}
+              className="flex justify-between w-full h-12 items-center px-4"
+            >
+              <div className="flex items-center gap-2">
+                {isSelected ? (
+                  <FolderOpen size={20} />
+                ) : (
+                  <Folder size={20} />
+                )}
+                <span>{f.title}</span>
+              </div>
+              <DeleteFolderDialog folderId={f.id} />
+            </Link>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Desktop-specific folder list component (with sidebar components)
+const DesktopFoldersList = ({ 
+  folders, 
+  currentFolder, 
+  isFoldersLoading
+}: {
+  folders: FolderType[];
+  currentFolder: FolderType | null;
+  isFoldersLoading: boolean;
+}) => {
+  if (isFoldersLoading) {
+    return (
+      <div className="space-y-2">
+        {Array(3)
+          .fill(0)
+          .map((_, idx) => (
+            <Skeleton key={idx} className="h-8 w-full" />
+          ))}
+      </div>
+    );
+  }
+
+  if (folders.length === 0) {
+    return (
+      <Card className="my-4 py-2">
+        <CardContent>
+          <p className="text-center text-muted-foreground">
+            No folders found.
+            <br />
+            <br /> Create a new folder to get started!
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <SidebarMenu>
+      {folders.map((f) => {
+        const isSelected = currentFolder?.id === f.id;
+        return (
+          <SidebarMenuItem
+            key={f.id}
+            onClick={() => {
+              useNotesStore.setState({ currentFolder: f });
+            }}
+            className={cn(
+              "transition-colors rounded-md mb-1",
+              isSelected
+                ? "bg-accent text-accent-foreground"
+                : "hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <SidebarMenuButton asChild>
+              <Link
+                href={`/dashboard/folder/${f.id}`}
+                className="flex justify-between w-full items-center"
+              >
+                <div className="flex items-center gap-2">
+                  {isSelected ? (
+                    <FolderOpen size={20} />
+                  ) : (
+                    <Folder size={20} />
+                  )}
+                  <span>{f.title}</span>
+                </div>
+                <DeleteFolderDialog folderId={f.id} />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
+    </SidebarMenu>
+  );
+};
 
 const NewFolderDialog = () => {
   const [open, setOpen] = useState(false); // control dialog

@@ -12,12 +12,14 @@ import { Button } from "./ui/button";
 import { redirect } from "next/navigation";
 import { syncClerkUserToDB } from "@/actions/user.actions";
 import useSidebarStore from "@/store/sidebar.store";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Bot, Folder } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const NotesNavbar = () => {
   const { isLoaded, user } = useUser();
   const { toggleAiSidebar, toggleFoldersSidebar } = useSidebarStore();
+  const isMobile = useIsMobile();
 
   if (!user) redirect("/");
 
@@ -37,15 +39,18 @@ const NotesNavbar = () => {
 
         {/* Middle buttons */}
         <div className="flex gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 rounded-lg flex gap-2"
-            onClick={toggleFoldersSidebar}
-          >
-            <Folder />
-            <span className="hidden sm:block">Folders</span>
-          </Button>
+          {/* Only show Folders button on mobile, since desktop sidebar is always visible */}
+          {isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-lg flex gap-2"
+              onClick={toggleFoldersSidebar}
+            >
+              <Folder />
+              <span className="hidden sm:block">Folders</span>
+            </Button>
+          )}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
