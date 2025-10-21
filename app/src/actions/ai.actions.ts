@@ -3,6 +3,17 @@
 import axios from "@/lib/axios";
 import prisma from "@/lib/prisma";
 
+export const aiServerHealthCheck = async () => {
+  try {
+    await axios.get("/");
+    return { status: true };
+  }
+  catch (error) {
+    console.log(error);
+    return { status: false };
+  }
+}
+
 export const uploadDocument = async (
   file: File,
   userId: string,

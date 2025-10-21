@@ -1,3 +1,4 @@
+import AiServerStatusBanner from "@/components/AiServerStatusBanner";
 import AiSidebar from "@/components/AiSidebar";
 import FoldersSidebar from "@/components/FoldersSidebar";
 import NotesNavbar from "@/components/NotesNavbar";
@@ -8,13 +9,14 @@ import React from "react";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const { userId } = await auth();
-  
+
   if (!userId) {
     redirect("/");
   }
 
   return (
     <div className="flex w-full overflow-hidden h-screen">
+      <AiServerStatusBanner />
       <NotesNavbar />
       <FoldersSidebar />
       <SidebarInset>
