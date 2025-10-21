@@ -11,7 +11,8 @@ An intelligent notes app that combines powerful notes capabilities with AI-power
 - **Folder Organization**: All your notes organized into folders
 - **Auto-sync**: Real-time saving and synchronization across sessions
 
-![image](app/public/mockups/dashboard.png)
+![image](app/public/mockups/dashboard_2.png)
+
 
 ### 🤖 AI-Powered Learning
 - **AI Tutor Chat**: Interactive conversations with AI tutors trained on your materials
@@ -21,12 +22,14 @@ An intelligent notes app that combines powerful notes capabilities with AI-power
 
 ![image](app/public/mockups/chatbot.png)
 
+
 ### 📊 Intelligent Analysis
 - **Content Gap Analysis**: Identify missing points and knowledge gaps
 - **Keyword Extraction**: Discover important terms and concepts you might have missed
 - **Study Roadmaps**: Get in depth roadmaps for improvement and next steps
 
 ![image](app/public/mockups/analysis.png)
+
 
 
 ## 🚀 Getting Started
