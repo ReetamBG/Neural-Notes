@@ -67,13 +67,14 @@ const useNotesStore = create<NotesState>((set) => ({
     const res = await fetchNoteById(noteId);
     if (!res.status || !res.data) {
       toast.error(res.message || "Failed to load note");
+      set({ isNoteContentLoading: false });
       return null;
     } else {
       const note = res.data.note;
       set({ currentNote: note });
+      set({ isNoteContentLoading: false });
       return note;
     }
-    set({ isNoteContentLoading: false });
   },
 
   addNewNote: async (title: string, content: string, contentString: string, folderId: string) => {

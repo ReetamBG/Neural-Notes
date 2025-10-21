@@ -376,7 +376,7 @@ const AnalysisReport = ({ analysis }: { analysis: NoteAnalysisResult }) => {
         <p className={`text-sm ${accuracyInfo.color} mb-3`}>
           {accuracyInfo.message}
         </p>
-        <Progress value={analysis.accuracy} className="h-2" />
+        <Progress value={analysis.accuracy * 100} className="h-2" />
       </div>
 
       {/* LLM Note Section */}
