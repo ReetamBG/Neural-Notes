@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
+import Image from "next/image";
 
 const Features = () => {
   const content = [
@@ -9,7 +10,7 @@ const Features = () => {
       description:
         "Organize your thoughts effortlessly. Create folders, write in Markdown, and keep all your notes neatly structured. Your study space, optimized.",
       content: (
-        <img
+        <Image
           src="/mockups/dashboard.png"
           alt="dashboard mockup"
           width={600}
@@ -23,7 +24,7 @@ const Features = () => {
         "Upload any PDF, text, or video, and instantly chat with an AI that teaches, explains, and answers questions on the topic—like having a personal tutor 24/7.",
       content: (
         <div className="border-6 rounded-xl overflow-hidden">
-          <img
+          <Image
             src="/mockups/chatbot.png"
             width={600}
             className="h-full w-full object-cover"
@@ -38,7 +39,7 @@ const Features = () => {
         "Let AI evaluate your notes against reference materials. Get instant feedback on accuracy, missing points, and suggested study roadmaps to level up your learning efficiently.",
       content: (
         <div className="border-6 rounded-xl overflow-hidden">
-          <img
+          <Image
             src="/mockups/analysis.png"
             width={600}
             className="h-full w-full object-cover"
