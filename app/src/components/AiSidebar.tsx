@@ -34,14 +34,14 @@ import {
 import LoadingContent from "./LoadingContent";
 
 const AiSidebar = () => {
-  const { aiSidebarOpen, toggleAiSidebar } = useSidebarStore();
+  const { aiSidebarOpen, aiSidebarOpenMobile, toggleAiSidebarMobile } = useSidebarStore();
   const { currentFolder } = useNotesStore();
   const isMobile = useIsMobile();
 
   // Mobile version using Sheet
   if (isMobile) {
     return (
-      <Sheet open={aiSidebarOpen} onOpenChange={toggleAiSidebar}>
+      <Sheet open={aiSidebarOpenMobile} onOpenChange={toggleAiSidebarMobile}>
         <SheetContent side="right" className="w-80 p-0" style={{ zIndex: 110 }}>
           <SheetHeader className="p-4 pb-2 pt-16">
             <SheetTitle>AI Chat</SheetTitle>
@@ -65,6 +65,7 @@ const AiSidebar = () => {
   // Desktop version - unchanged logic
   return (
     <SidebarProvider
+    defaultOpen={false}
       className={`${
         aiSidebarOpen ? "w-80" : "w-0"
       } transition-width duration-100`}
@@ -81,7 +82,7 @@ const AiSidebarContent = () => {
 
   useEffect(() => {
     // manual sync of sidebar state with store (could not figure out other way)
-    if (aiSidebarOpen === !open) toggleSidebar();
+    if (aiSidebarOpen !== open) toggleSidebar();
   }, [aiSidebarOpen, open, toggleSidebar]);
 
   return (

@@ -1,11 +1,12 @@
 import TextEditor from '@/components/Editor'
 import React from 'react'
 
-const page = ({ params }: { params: { folderId: string; noteId: string } }) => {
+const Page = ({ params }: { params: Promise<{ folderId: string; noteId: string }> }) => {
+  const { folderId, noteId } = React.use(params);
   
   return (
-    <div className="h-full"><TextEditor folderId={params.folderId} noteId={params.noteId} /></div>
+    <div className="h-full"><TextEditor folderId={folderId} noteId={noteId} /></div>
   )
 }
 
-export default page
+export default Page

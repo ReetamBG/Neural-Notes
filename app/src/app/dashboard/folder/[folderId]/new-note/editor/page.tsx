@@ -1,11 +1,11 @@
 import TextEditor from '@/components/Editor'
 import React from 'react'
 
-const page = async ({ params }: { params: { folderId: string } }) => {
-  const { folderId } = await params;
+const Page = ({ params }: { params: Promise<{ folderId: string }> }) => {
+  const { folderId } = React.use(params);
   return (
     <div className="h-full"><TextEditor isNewNote={true} folderId={folderId} /></div>
   )
 }
 
-export default page
+export default Page

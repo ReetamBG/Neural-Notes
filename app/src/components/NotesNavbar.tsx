@@ -19,14 +19,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
 const NotesNavbar = () => {
   const { isLoaded, user } = useUser();
-  const { toggleAiSidebar, toggleFoldersSidebar } = useSidebarStore();
+  const { toggleAiSidebar, toggleAiSidebarMobile, toggleFoldersSidebar } = useSidebarStore();
   const isMobile = useIsMobile();
 
   if (!user) redirect("/");
@@ -65,7 +64,7 @@ const NotesNavbar = () => {
                 variant="outline"
                 size="sm"
                 className="h-8 rounded-lg flex gap-2"
-                onClick={toggleAiSidebar}
+                onClick={isMobile ? toggleAiSidebarMobile : toggleAiSidebar}
               >
                 <Bot />
                 <span className="hidden sm:block">AI Chat</span>
