@@ -1,264 +1,229 @@
-# ML API - Document Analysis and Chat System
+# Neural Notes - AI Service
 
-A FastAPI-based machine learning API that provides document analysis, chat functionality, and educational assessment features.
+FastAPI backend service providing AI-powered document processing, semantic search, and educational analysis for the Neural Notes platform.
 
-## Features
+## 🛠️ Tech Stack
 
-- **Document Processing**: Upload and process PDF files and videos
-- **RAG Chat**: Chat with your documents using Retrieval-Augmented Generation
-- **Text Analysis**: Analyze text accuracy, find missing information, and generate study roadmaps
-- **Multi-format Support**: PDF documents and video files (with audio transcription)
-- **Vector Search**: Efficient semantic search using ChromaDB and HuggingFace embeddings
+- **Framework**: FastAPI with async support
+- **AI/ML**: LangChain, OpenAI (via OpenRouter), HuggingFace Transformers
+- **Vector Database**: ChromaDB for semantic search
+- **Speech Recognition**: Vosk (offline)
+- **Text Processing**: NLTK, scikit-learn
+- **File Processing**: PyPDF, FFmpeg
 
-## Project Structure
+## 🚀 Getting Started
 
-```
-ML_API/
-├── app/
-│   ├── api/                 # API endpoints
-│   │   ├── analysis.py      # Text analysis endpoints
-│   │   ├── chat.py          # Chat endpoints
-│   │   └── upload.py        # File upload endpoints
-│   ├── core/                # Core configuration
-│   │   ├── config.py        # Application settings
-│   │   └── middleware.py    # Custom middleware
-│   ├── models/              # Pydantic models
-│   │   └── schemas.py       # Request/response schemas
-│   ├── services/            # Business logic
-│   │   ├── analysis.py      # Text analysis service
-│   │   ├── llm.py          # LLM service
-│   │   ├── transcription.py # Audio transcription
-│   │   └── vectorstore.py   # Vector database service
-│   ├── utils/               # Utility functions
-│   │   └── file_utils.py    # File handling utilities
-│   └── main.py              # FastAPI application
-├── vosk-model-small-en-us-0.15/  # Vosk speech recognition model
-├── requirements.txt         # Python dependencies
-├── .env.example            # Environment variables template
-└── run.py                  # Application entry point
-```
+### Prerequisites
+- Python 3.8+ (recommended: Python 3.10+)
+- FFmpeg (system dependency for video processing)
+- OpenRouter API key (for LLM access)
 
-## Installation
+### Detailed Setup
 
-1. **Clone the repository**
+1. **Navigate to ai-service directory**:
    ```bash
-   cd /path/to/ML_API
+   cd ai-service
    ```
 
-2. **Create virtual environment**
+2. **Install system dependencies**:
    ```bash
+   # Ubuntu/Debian
+   sudo apt update && sudo apt install ffmpeg
+   
+   # macOS with Homebrew
+   brew install ffmpeg
+   
+   # Windows (download from https://ffmpeg.org/download.html)
+   # Add to PATH after installation
+   ```
+
+3. **Set up Python virtual environment**:
+   ```bash
+   # Create virtual environment
    python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   # or
+   
+   # Activate virtual environment
+   source venv/bin/activate  # Linux/macOS
+   # OR
    venv\Scripts\activate     # Windows
    ```
 
-3. **Install dependencies**
+4. **Install Python dependencies**:
    ```bash
+   # Install requirements
    pip install -r requirements.txt
    ```
 
-4. **Install system dependencies**
-   - **FFmpeg** (required for video processing):
-     ```bash
-     # Ubuntu/Debian
-     sudo apt update && sudo apt install ffmpeg
-     
-     # macOS
-     brew install ffmpeg
-     
-     # Windows
-     # Download from https://ffmpeg.org/download.html
-     ```
+5. **Download required models**:
+   ```bash
+   # NLTK data (automatic on first run, or manual):
+   python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+   
+   # Vosk model should be in: vosk-model-small-en-us-0.15/
+   # Download if missing from: https://alphacephei.com/vosk/models
+   ```
 
-5. **Set up environment variables**
+6. **Environment configuration**:
    ```bash
    cp .env.example .env
-   # Edit .env with your OpenRouter API key
+   ```
+   
+   Configure the following in `.env`:
+   ```env
+   # OpenRouter API (Required)
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
    ```
 
-6. **Download NLTK data** (if needed)
-   ```python
-   import nltk
-   nltk.download('punkt')
-   nltk.download('stopwords')
+7. **Create required directories**:
+   ```bash
+   mkdir -p data/uploads data/vector_dbs data/extracted_audios
    ```
 
-## Configuration
+8. **Run the service**:
+   ```bash
+   # Development mode 
+   python run.py
+   
+   # OR production mode
+   uvicorn app:app --host 0.0.0.0 --port 8000
+   ```
 
-Edit the `.env` file with your settings:
+9. **Verify installation**:
+   - Service: http://localhost:8000
+   - API Documentation: http://localhost:8000/docs
+   - Health Check: http://localhost:8000/api/v1/health
 
-```env
-OPENROUTER_API_KEY="your_api_key_here"
-DEBUG=true
-MAX_UPLOAD_SIZE=52428800
-# ... other settings
-```
-
-## Running the Application
-
-### Development Mode
-```bash
-python run.py
-```
-
-### Production Mode
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
-```
-
-The API will be available at:
-- **Main API**: http://localhost:8000
-- **Interactive Docs**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-## API Endpoints
+## 📡 API Endpoints
 
 ### File Upload
-- `POST /api/v1/upload/pdf` - Upload PDF file
-- `POST /api/v1/upload/video` - Upload video file
+- `POST /api/v1/upload/pdf` - Process PDF documents
+- `POST /api/v1/upload/video` - Process video files with transcription
 
-### Chat
-- `POST /api/v1/chat/` - Chat with uploaded document
-- `POST /api/v1/chat/notes` - Chat with uploaded notes
-- `POST /api/v1/chat/upload-notes` - Upload text notes
+### Chat & Tutoring  
+- `POST /api/v1/chat/` - Chat with uploaded documents
+- `POST /api/v1/chat/notes` - Chat with user notes
+- `POST /api/v1/chat/upload-notes` - Upload notes for tutoring
 
 ### Analysis
-- `POST /api/v1/analysis/` - Analyze text accuracy and generate insights
+- `POST /api/v1/analysis/` - Analyze note accuracy and generate insights and roadmap
 
-### Health Check
-- `GET /api/v1/health` - Health status
+### Health
+- `GET /api/v1/health` - Service health check
 
-## Usage Examples
+## ⚙️ Configuration
 
-### 1. Upload a PDF
+All app configuration in `app/core/config.py`:
+
+## 🔧 Technical Details
+
+**Processing Pipeline**:
+- PDF → Text extraction → Semantic chunking → Vector embeddings
+- Video → Audio extraction → Vosk transcription → Vector embeddings
+- Analysis → Similarity scoring → Gap detection → Roadmap generation
+
+
+## � Development Workflow
+
+### Running in Development
 ```bash
+# Activate virtual environment
+source venv/bin/activate
+
+# Start with auto-reload
+python run.py
+
+# OR with uvicorn directly
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Testing the API
+```bash
+# Health check
+curl http://localhost:8000/api/v1/health
+
+# Upload a PDF
 curl -X POST "http://localhost:8000/api/v1/upload/pdf" \
      -H "Content-Type: multipart/form-data" \
-     -F "file=@document.pdf"
-```
+     -F "file=@sample.pdf"
 
-### 2. Chat with Document
-```bash
+# Chat with document
 curl -X POST "http://localhost:8000/api/v1/chat/" \
      -H "Content-Type: application/json" \
-     -d '{
-       "query": "What is the main topic of this document?",
-       "filename": "document.pdf"
-     }'
+     -d '{"query": "What is this document about?", "filename": "sample.pdf"}'
 ```
 
-### 3. Analyze Text
+### Code Quality
 ```bash
-curl -X POST "http://localhost:8000/api/v1/analysis/" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "title": "Machine Learning Basics",
-       "text": "Machine learning is a subset of AI...",
-       "filename": "ml_textbook.pdf"
-     }'
-```
+# Format code
+black app/
 
-## Key Features Explained
+# Sort imports
+isort app/
 
-### Document Processing
-- **PDF**: Extracts text and creates searchable embeddings
-- **Video**: Extracts audio → transcribes with Vosk → creates embeddings
+# Lint code
+flake8 app/
 
-### Text Analysis
-- **Accuracy Score**: Cosine similarity between user text and reference material
-- **Missing Information**: Identifies content gaps using semantic similarity
-- **Missing Keywords**: TF-IDF and NLTK-based keyword extraction
-- **Study Roadmap**: AI-generated study suggestions based on gaps
-
-### Performance Optimizations
-- **Caching**: Vector stores and retrievers are cached for faster access
-- **Async Processing**: Non-blocking operations for better performance
-- **Chunked Processing**: Efficient handling of large documents
-
-## Dependencies
-
-### Core Framework
-- **FastAPI**: Modern, fast web framework
-- **Uvicorn**: ASGI server
-- **Pydantic**: Data validation using Python type hints
-
-### ML & AI
-- **LangChain**: LLM application framework
-- **OpenAI**: LLM integration via OpenRouter
-- **HuggingFace**: Sentence transformers for embeddings
-- **ChromaDB**: Vector database for semantic search
-
-### Audio/Video Processing
-- **Vosk**: Offline speech recognition
-- **FFmpeg**: Audio/video processing (system dependency)
-
-### Text Processing
-- **NLTK**: Natural language processing
-- **scikit-learn**: TF-IDF vectorization
-- **PyPDF**: PDF text extraction
-
-## Error Handling
-
-The API includes comprehensive error handling:
-- **400**: Bad Request (invalid file format, malformed request)
-- **404**: Not Found (document not uploaded)
-- **413**: Payload Too Large (file size limit exceeded)
-- **500**: Internal Server Error (processing failures)
-
-## Development
-
-### Code Style
-- **Black**: Code formatting
-- **isort**: Import sorting
-- **Flake8**: Linting
-
-### Testing
-```bash
+# Run tests
 pytest tests/
 ```
 
-### Project Principles
-- **Separation of Concerns**: Clear service layer separation
-- **Type Safety**: Full type hints with Pydantic models
-- **Async/Await**: Non-blocking operations
-- **Configuration Management**: Environment-based settings
-- **Error Handling**: Comprehensive exception management
+## 🐛 Troubleshooting
 
-## Troubleshooting
+### Installation Issues
 
-### Common Issues
+**FFmpeg not found**:
+```bash
+# Verify installation
+ffmpeg -version
 
-1. **FFmpeg not found**
-   ```
-   Solution: Install FFmpeg system-wide
-   ```
+# Ubuntu/Debian
+sudo apt update && sudo apt install ffmpeg
 
-2. **Vosk model missing**
-   ```
-   Error: Model path 'vosk-model-small-en-us-0.15' does not exist
-   Solution: Ensure the Vosk model directory is present
-   ```
+# macOS
+brew install ffmpeg
+```
 
-3. **Large file uploads**
-   ```
-   Error: File too large
-   Solution: Adjust MAX_UPLOAD_SIZE in .env
-   ```
+**Python dependencies fail**:
+```bash
+# Update pip and setuptools
+pip install --upgrade pip setuptools wheel
 
-4. **OpenRouter API errors**
-   ```
-   Solution: Check OPENROUTER_API_KEY in .env
-   ```
+# Install with verbose output
+pip install -r requirements.txt -v
+```
 
-## Contributing
+### Runtime Issues
 
-1. Follow the existing code structure
-2. Add type hints to all functions
-3. Use async/await for I/O operations
-4. Add proper error handling
-5. Update tests for new features
+**Vosk model missing**:
+```bash
+# Error: Model path 'vosk-model-small-en-us-0.15' does not exist
+# Download from: https://alphacephei.com/vosk/models
+# Extract to ai-service directory
+```
 
-## License
+**OpenRouter API errors**:
+```bash
+# Verify API key in .env
+echo $OPENROUTER_API_KEY
 
-[Add your license here]
+# Test API key
+curl -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+     https://openrouter.ai/api/v1/models
+```
+
+**Large file upload issues**:
+```bash
+# Increase MAX_UPLOAD_SIZE in .env
+MAX_UPLOAD_SIZE=104857600  # 100MB
+
+# Check disk space
+df -h ./data/
+```
+
+**Vector database issues**:
+```bash
+# Clear vector database cache
+rm -rf data/vector_dbs/*
+
+# Restart service after clearing cache
+```

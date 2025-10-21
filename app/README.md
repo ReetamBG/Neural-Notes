@@ -1,36 +1,161 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Neural Notes - Frontend Application
 
-## Getting Started
+Next.js frontend application for the Neural Notes platform. Provides a modern, responsive interface for note management, AI chat interactions, and content analysis visualization.
 
-First, run the development server:
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 15 with App Router 
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS with Shadcn UI and Aceternity UI components
+- **Editor**: TipTap text editor
+- **Authentication**: Clerk
+- **Database**: Prisma ORM
+- **State Management**: Zustand
+- **Animations**: Framer Motion
+- **Icons**: Lucide React, React Icons
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- Neural Notes AI Service running on port 8000
+- Database (PostgreSQL, MySQL, or SQLite)
+
+### Detailed Setup
+
+1. **Navigate to app directory**:
+   ```bash
+   cd app
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Environment Configuration**:
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Configure the following variables in `.env.local`:
+   ```env
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+   CLERK_SECRET_KEY=sk_test_...
+   
+   # Database
+   DATABASE_URL="postgresql://user:password@localhost:5432/neural_notes"
+   # or for SQLite: "file:./dev.db"
+   
+   # AI Service Integration (URL of the AI service backend)
+   NEXT_PUBLIC_AI_SERVICE_URL=http://localhost:8000
+   ```
+
+4. **Database Setup**:
+   ```bash
+   # Generate Prisma client
+   npx prisma generate
+   
+   # Push schema to database (development)
+   npx prisma migrate dev
+   
+   # OR run migrations (production)
+   npx prisma migrate deploy
+   ```
+
+5. **Start development server**:
+   ```bash
+   npm run dev
+   ```
+
+6. **Access the application**:
+   - Frontend: http://localhost:3000
+   - Make sure AI Service is running at http://localhost:8000
+
+### Production Build
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Build the application
+npm run build
+
+# Start production server
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📁 Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── app/                 # Next.js app router pages
+├── components/          # React components
+│   ├── ui/             # Reusable UI components
+│   ├── Editor.tsx      # Note editor component
+│   ├── ChatBot.tsx     # AI chat interface
+│   └── ...
+├── actions/            # Server actions
+├── lib/                # Utility libraries
+├── hooks/              # Custom React hooks
+└── store/              # State management
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔧 Available Scripts
 
-## Learn More
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-To learn more about Next.js, take a look at the following resources:
+## 🎯 Key Components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Editor
+Rich markdown editor with real-time preview and collaborative features.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### AI Sidebar
+Context-aware AI assistant that helps with note-taking and provides explanations.
 
-## Deploy on Vercel
+### Folders Sidebar
+Hierarchical folder structure for organizing notes efficiently.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Chat Interface
+Interactive chat with AI tutors trained on your uploaded materials.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## � API Integration
+
+Connects to Neural Notes AI Service (`localhost:8000`) for:
+- Document upload and processing
+- AI chat and tutoring functionality  
+- Content analysis and insights
+
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Database Connection Issues**:
+```bash
+# Check if database is running
+# Verify DATABASE_URL in .env
+# Run: npx prisma db push
+```
+
+**Clerk Authentication Issues**:
+- Verify API keys in Clerk dashboard
+- Check redirect URLs are configured
+- Ensure environment variables are set
+
+**AI Service Connection**:
+- Verify AI service is running on port 8000
+- Check NEXT_PUBLIC_AI_SERVICE_URL environment variable
+- Test API endpoint: `curl http://localhost:8000/api/v1/health`
+
+**Build Issues**:
+```bash
+# Clear Next.js cache
+rm -rf .next
+npm run build
+```
