@@ -213,8 +213,8 @@ curl -H "Authorization: Bearer $OPENROUTER_API_KEY" \
 
 **Large file upload issues**:
 ```bash
-# Increase MAX_UPLOAD_SIZE in .env
-MAX_UPLOAD_SIZE=104857600  # 100MB
+# Increase MAX_UPLOAD_SIZE in `app/core/config.py`
+max_upload_size: 100 * 1024 * 1024  # 100MB
 
 # Check disk space
 df -h ./data/
