@@ -14,6 +14,7 @@ const Features = () => {
           src="/mockups/dashboard.png"
           alt="dashboard mockup"
           width={600}
+          height={0}
           className="h-full w-full object-contain"
         />
       ),
@@ -27,6 +28,7 @@ const Features = () => {
           <Image
             src="/mockups/chatbot.png"
             width={600}
+            height={0}
             className="h-full w-full object-cover"
             alt="AI Tutor"
           />
@@ -42,6 +44,7 @@ const Features = () => {
           <Image
             src="/mockups/analysis.png"
             width={600}
+            height={0}
             className="h-full w-full object-cover"
             alt="AI Tutor"
           />
