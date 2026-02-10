@@ -1,76 +1,72 @@
-# Neural Notes 
+# Neural Notes
 
-An intelligent notes app that combines powerful notes capabilities with AI-powered analysis and tutoring capabilities. Transform your study materials into interactive learning experiences with personalized AI tutors and comprehensive content analysis.
+An intelligent notes application that combines powerful note-taking capabilities with AI-powered analysis and tutoring functionality. Transform your study materials into interactive learning experiences with personalized AI tutors and comprehensive content analysis.
 
-![image](app/public/screenshots/landing-page.png)
+![Neural Notes Landing Page](app/public/screenshots/landing-page.png)
 
-## ✨ Features
+## Features
 
-### 📝 Smart Note Management
+### Smart Note Management
 - **Rich Markdown Editor**: Seamless writing experience with real-time preview
-- **Folder Organization**: All your notes organized into folders
+- **Folder Organization**: Hierarchical organization system for all your notes
 - **Auto-sync**: Real-time saving and synchronization across sessions
 
-![image](app/public/mockups/dashboard_2.png)
+![Dashboard Interface](app/public/mockups/dashboard_2.png)
 
-
-### 🤖 AI-Powered Learning
+### AI-Powered Learning
 - **AI Tutor Chat**: Interactive conversations with AI tutors trained on your materials
 - **Multi-format Upload**: Support for PDFs, videos, and other reference materials
 - **Note-based Tutoring**: Generate personalized tutors from your existing notes
 - **Contextual Learning**: Get explanations and help tailored to your specific content
 
-![image](app/public/mockups/chatbot.png)
+![AI Chatbot Interface](app/public/mockups/chatbot.png)
 
-
-### 📊 Intelligent Analysis
+### Intelligent Analysis
 - **Content Gap Analysis**: Identify missing points and knowledge gaps
 - **Keyword Extraction**: Discover important terms and concepts you might have missed
-- **Study Roadmaps**: Get in depth roadmaps for improvement and next steps
+- **Study Roadmaps**: Generate detailed roadmaps for improvement and next steps
 
-![image](app/public/mockups/analysis.png)
+![Analysis Dashboard](app/public/mockups/analysis.png)
 
 
 
-## 🚀 Getting Started
+## Getting Started
 
-### Quick Overview
+### System Overview
 
-Neural Notes consists of two services that work together:
+Neural Notes consists of two main services:
 
 1. **AI Service** (`/ai-service`) - FastAPI backend for document processing and AI features
-2. **Frontend App** (`/app`) - Next.js web application for user interaction
+2. **Frontend Application** (`/app`) - Next.js web application for user interaction
 
 ### Prerequisites
 - Node.js (v18+) and Python (3.8+)
 - FFmpeg (for video processing)
 - OpenRouter API key (for AI features)
 
-### Setup
+### Installation
 ```bash
 git clone https://github.com/ReetamBG/Neural-Notes.git
 cd Neural-Notes
 ```
 
-Then follow the detailed setup instructions in each service's README:
-- **AI Service Setup**: See [`/ai-service/README.md`](./ai-service/README.md)
-- **Frontend Setup**: See [`/app/README.md`](./app/README.md)
+Refer to the detailed setup instructions in each service's README:
+- **AI Service Setup**: [`/ai-service/README.md`](./ai-service/README.md)
+- **Frontend Setup**: [`/app/README.md`](./app/README.md)
 
-
-## 🎯 Use Cases
+## Use Cases
 
 ### Students
 - Upload lecture videos and PDFs to create personalized study tutors
-- Analyze your notes to get instant feedback
-- Get study recommendations based on knowledge gapsn
+- Analyze notes to receive instant feedback
+- Get study recommendations based on knowledge gaps
 
-### Researchers  
+### Researchers
 - Process research papers and create searchable knowledge bases
 - Analyze literature reviews for completeness and accuracy
 - Organize and cross-reference multiple sources
 
-
-## 🛠️ Technology Stack
+## Technology Stack
 
 **Frontend**
 - Next.js 15, TypeScript, Tailwind CSS
@@ -82,7 +78,7 @@ Then follow the detailed setup instructions in each service's README:
 - ChromaDB, Vosk, NLTK, scikit-learn
 - PyPDF, FFmpeg, HuggingFace Transformers
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Neural-Notes/
@@ -93,7 +89,7 @@ Neural-Notes/
 │   │   └── lib/           # Utilities and configurations
 │   ├── prisma/            # Database schema and migrations
 │   └── package.json
-├── ai-service/            # FastAPI backend service  
+├── ai-service/            # FastAPI backend service
 │   ├── app/
 │   │   ├── api/           # API endpoints
 │   │   ├── services/      # Business logic
@@ -103,22 +99,18 @@ Neural-Notes/
 └── README.md
 ```
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions! Please:
+Contributions are welcome. Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/feature-name`)
 3. Follow the setup instructions in individual service READMEs
-4. Make your changes with proper testing
-5. Submit a Pull Request with clear description
+4. Make your changes with appropriate testing
+5. Submit a Pull Request with a clear description
 
-See individual service READMEs for detailed development workflows and technical guidelines.
+Refer to individual service READMEs for detailed development workflows and technical guidelines.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Made with ❤️ for learners and educators everywhere**

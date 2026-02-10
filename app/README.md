@@ -2,9 +2,9 @@
 
 Next.js frontend application for the Neural Notes platform. Provides a modern, responsive interface for note management, AI chat interactions, and content analysis visualization.
 
-## 🛠️ Tech Stack
+## Technology Stack
 
-- **Framework**: Next.js 15 with App Router 
+- **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS with Shadcn UI and Aceternity UI components
 - **Editor**: TipTap text editor
@@ -14,7 +14,7 @@ Next.js frontend application for the Neural Notes platform. Provides a modern, r
 - **Animations**: Framer Motion
 - **Icons**: Lucide React, React Icons
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v18+)
@@ -73,7 +73,7 @@ Next.js frontend application for the Neural Notes platform. Provides a modern, r
    npm run dev
    ```
 
-6. **Access the application**:
+   - Access the application**:
    - Frontend: http://localhost:3000
    - Make sure AI Service is running at http://localhost:8000
 
@@ -87,7 +87,7 @@ npm run build
 npm run start
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -103,14 +103,14 @@ src/
 └── store/              # State management
 ```
 
-## 🔧 Available Scripts
+## Available Scripts
 
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
-## 🎯 Key Components
+## Key Components
 
 ### Editor
 Rich markdown editor with real-time preview and collaborative features.
@@ -131,8 +131,7 @@ Connects to Neural Notes AI Service (`localhost:8000`) for:
 - AI chat and tutoring functionality  
 - Content analysis and insights
 
-
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
