@@ -2,7 +2,7 @@
 
 FastAPI backend service providing AI-powered document processing, semantic search, and educational analysis for the Neural Notes platform.
 
-## 🛠️ Tech Stack
+## Technology Stack
 
 - **Framework**: FastAPI with async support
 - **AI/ML**: LangChain, OpenAI (via OpenRouter), HuggingFace Transformers
@@ -11,7 +11,7 @@ FastAPI backend service providing AI-powered document processing, semantic searc
 - **Text Processing**: NLTK, scikit-learn
 - **File Processing**: PyPDF, FFmpeg
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.8+ (recommended: Python 3.10+)
@@ -93,7 +93,7 @@ FastAPI backend service providing AI-powered document processing, semantic searc
    - API Documentation: http://localhost:8000/docs
    - Health Check: http://localhost:8000/api/v1/health
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### File Upload
 - `POST /api/v1/upload/pdf` - Process PDF documents
@@ -110,11 +110,11 @@ FastAPI backend service providing AI-powered document processing, semantic searc
 ### Health
 - `GET /api/v1/health` - Service health check
 
-## ⚙️ Configuration
+## Configuration
 
-All app configuration in `app/core/config.py`:
+Application configuration is located in `app/core/config.py`.
 
-## 🔧 Technical Details
+## Technical Details
 
 **Processing Pipeline**:
 - PDF → Text extraction → Semantic chunking → Vector embeddings
@@ -167,7 +167,7 @@ flake8 app/
 pytest tests/
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Installation Issues
 
